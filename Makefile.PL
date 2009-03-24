@@ -4,7 +4,7 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     NAME	 => 'URI::GoogleChart',
     VERSION_FROM => 'lib/URI/GoogleChart.pm',
-    #ABSTRACT_FROM => 'lib/URI/GoogleChart.pm',
+    ABSTRACT_FROM => 'lib/URI/GoogleChart.pm',
     AUTHOR       => 'Gisle Aas <gisle@activestate.com>',
     LICENSE	 => 'perl',
 

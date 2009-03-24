@@ -127,3 +127,96 @@ sub param {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+URI::GoogleChart - Generate Google Chart URIs
+
+=head1 SYNOPSIS
+
+ use URI::GoggleChart;
+ my $chart = URI::GoogleChart->new("line", 300, 100,
+     data => [45, 80, 100, 33],
+ );
+
+=head1 DESCRIPTION
+
+This module provide a constructor function for Google Chart URIs.
+
+=over
+
+=item $uri = URI::GoogleChart->new( $type, $width, $height, %opt )
+
+The constructor method's 3 first arguments are mandatory and they define the
+type of chart to generate and the dimention of the image in pixels.
+The rest of the arguments are provided as key/value pairs.
+
+The $type can either be one of the type code documented at the Google Charts
+page or one of the following more readable aliases:
+
+    lines
+    sparklines
+    xy-lines
+
+    horizontal-stacked-bars
+    vertical-stacked-bars
+    horizontal-grouped-bars
+    vertcal-grouped-bars
+
+    pie
+    pie-3d
+    concentric-pie
+
+    venn
+    scatter-plot
+    radar
+    radar-splines
+    map
+    google-o-meter
+
+The key/value pairs can either be one of the documented C<chXXX> codes or one
+of the following:
+
+=over
+
+=item data => [$v1, $v2,...]
+
+=item data => [[$v1, $v2,...], [$v1, $v2,...], ...]
+
+=item data => [{v => [$v1, $v2,...], %opt}, ...]
+
+Provides the data to be charted.  Missing data points should be provided as C<undef>. 
+
+=item min => $num
+
+=item max => $num
+
+Defines the minimum and maximum value for the default group.
+
+=item group => { $name => { min => $min, max => $max }, ...},
+
+Define parameters for named data series groups.
+
+=item title => $str
+
+=item title => { text => $str, color => $color, fontsize => $fontsize }
+
+Sets the title for the chart; optionally changing the color and fontsize used.
+
+=item margin => $num
+
+=item margin => { left => $n, right => $n, top => $n, bottom => $n }
+
+Sets the chart margin
+
+=back
+
+=back
+
+=head1 SEE ALSO
+
+L<http://code.google.com/apis/chart/>
+
+L<URI>

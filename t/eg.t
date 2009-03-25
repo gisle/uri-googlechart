@@ -57,7 +57,7 @@ chart("lxy", 200, 125,
         [undef],
         [5,25,45,65,85],
     ],
-    chco => "3072F3,ff0000",
+    color => [qw(3072F3 red)],
 );
 
 chart("horizontal-stacked-bars", 200, 150,
@@ -66,7 +66,7 @@ chart("horizontal-stacked-bars", 200, 150,
 	[50,60,100,40,20],
     ],
     min => 0, max => 200,
-    chco => "3072F3,ff0000",
+    color => [qw(3072F3 f00)],
 );
 
 chart("vertical-grouped-bars", 300, 125,

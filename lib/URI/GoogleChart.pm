@@ -31,6 +31,15 @@ our %type_alias = (
     "google-o-meter" => "gom",
 );
 
+our %color_alias = (
+    "red" => "FF0000",
+    "blue" => "0000FF",
+    "green" => "00FF00",
+    "white" => "FFFFFF",
+    "black" => "000000",
+    "transparent" => "FFFFFFFF",
+);
+
 sub new {
     my($class, $type, $width, $height, %opt) = @_;
 
@@ -51,6 +60,19 @@ sub new {
 	max => 1,
 	encoding => 1,
 
+	color => sub {
+	    my $v = shift;
+	    $v = [$v] unless ref($v);
+	    for (@$v) {
+		if (my $c = $color_alias{$_}) {
+		    $_ = $c;
+		}
+		elsif (/^[\da-fA-F]{3}\z/) {
+		    $_ = join("", map "$_$_", split(//, $_));
+		}
+	    }
+	    $param{chco} = join(",", @$v);
+	},
 	title => sub {
 	    my $title = shift; 
 	    ($title, my($color, $size)) = @$title if ref($title) eq "ARRAY";
@@ -370,6 +392,16 @@ point.  It provide a resolution of 1/4096.
 The default encoding is currently "t"; but expect this to change.  The default
 ought to be automatically selected based on the resolution of the chart and
 the number of data points provided.
+
+=item color => $color
+
+=item color => [$color1, $color2, ...]
+
+Sets the colors to use for charting the data series.  The canonical form for
+$color is hexstrings either of "RRGGBB" or "RRGGBBAA" form.  When you use this
+interface you might also use "RGB" form as well as some comon names like "red",
+"blue", "green", "white", "black",... which are expanded to the canonical form
+in the URI.
 
 =item title => $str
 

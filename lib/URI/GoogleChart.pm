@@ -85,7 +85,7 @@ sub new {
     for ($uri->query) {
 	s/%3A/:/g;
 	s/%2C/,/g;
-	s/%7C/|/g;
+	s/%7C/|/g; # XXX doesn't work (it ends up encoded anyways)
 	$uri->query($_);
     }
     return $uri;

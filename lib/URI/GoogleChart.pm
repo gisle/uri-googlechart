@@ -108,6 +108,9 @@ sub _default_minmax {
 
 sub _data {
     my($data, $param, $opt) = @_;
+
+    # various shortcuts
+    $data = _deep_copy($data);  # want to modify it
     if (ref($data) eq "ARRAY") {
 	$data = [$data] unless ref($data->[0]);
     }
@@ -117,7 +120,11 @@ sub _data {
     else {
 	$data = [[$data]];
     }
-    my %group;
+
+    my $group = _deep_copy($opt->{group});
+    $group->{""}{min} = $opt->{min};
+    $group->{""}{max} = $opt->{max};
+
     for my $set (@$data) {
 	$set = { v => $set } if ref($set) eq "ARRAY";
 	my $v = $set->{v};
@@ -140,24 +147,27 @@ sub _data {
 		    $set->{$k} = $h{$k};
 		}
 
-		my $gv = $group{$g}{$k};
+		my $gv = $group->{$g}{$k};
 		if (!defined($gv) ||
 		    ($k eq "min" && $h{$k} < $gv) ||
 		    ($k eq "max" && $h{$k} > $gv)
 		   )
 		{
-		    $group{$g}{$k} = $h{$k};
+		    $group->{$g}{$k} = $h{$k};
 		}
 	    }
 	}
     }
 
+    #use Data::Dump; dd $data;
+    #use Data::Dump; dd $group;
+
     # encode data
     my @enc;
     for my $set (@$data) {
-	my @v = @{$set->{v}};
-        my($min, $max) = @{$group{$set->{group}}}{"min", "max"};
-	for (@v) {
+        my($min, $max) = @{$group->{$set->{group}}}{"min", "max"};
+	my $v = $set->{v};
+	for (@$v) {
 	    if (defined) {
 		if ($_ < $min || $_ > $max) {
 		    $_ = -1;
@@ -167,16 +177,24 @@ sub _data {
 		}
 		else {
 		    $_ = 100 * ($_ - $min) / ($max - $min);
-		    $_ = sprintf "%.0f", $_;
+		    $_ = sprintf "%.1f", $_ if $_ != int($_);
 		}
 	    }
 	    else {
 		$_ = -1;
 	    }
 	}
-	push(@enc, join(",", @v));
+	push(@enc, join(",", @$v));
     }
     $param->{chd} = "t:" . join("|", @enc);
+}
+
+sub _deep_copy {
+    my $o = shift;
+    return $o unless ref($o);
+    return [map _deep_copy($_), @$o] if ref($o) eq "ARRAY";
+    return {map { $_ => _deep_copy($o->{$_}) } keys %$o} if ref($o) eq "HASH";
+    die "Can't copy " . ref($o);
 }
 
 1;

@@ -213,16 +213,8 @@ sub _data {
         my($min, $max) = @{$group->{$set->{group}}}{"min", "max"};
 	my $v = $set->{v};
 	for (@$v) {
-	    if (defined) {
-		if ($_ < $min || $_ > $max) {
-		    $_ = $enc->{null};
-		}
-		elsif ($min == $max) {
-		    $_ = $enc->{null};
-		}
-		else {
-		    $_ = $enc->{fmt}(($_ - $min) / ($max - $min));
-		}
+	    if (defined($_) && $_ >= $min && $_ <= $max && $min != $max) {
+		$_ = $enc->{fmt}(($_ - $min) / ($max - $min));
 	    }
 	    else {
 		$_ = $enc->{null};

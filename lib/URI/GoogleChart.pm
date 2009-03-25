@@ -49,6 +49,7 @@ sub new {
 	group => 1,
 	min => 1,
 	max => 1,
+	encoding => 1,
 
 	title => sub {
 	    my $title = shift; 
@@ -163,30 +164,73 @@ sub _data {
     #use Data::Dump; dd $group;
 
     # encode data
-    my @enc;
+    my @C = ("A" .. "Z", "a" .. "z", 0 .. 9, "-", ".");
+    my $STR_s = join("", @C[0 .. 61]);
+    my $STR_e = do {
+	my @v;
+	for my $x (@C) {
+            for my $y (@C) {
+		push(@v, "$x$y");
+	    }
+	}
+	join("", @v);
+    };
+    die unless length($STR_s) == 62;
+    die unless length($STR_e) == 4096 * 2;
+
+    my $e = $opt->{encoding} || "t";
+    my %enc = (
+	t => {
+	    null => -1,
+	    sep1 => ",",
+	    sep2 => "|",
+	    fmt => sub {
+		my $v = 100 * shift;
+		$v = sprintf "%.1f", $v if $v != int($v);
+		$v;
+	    },
+	},
+	s => {
+	    null => "_",
+	    sep1 => "",
+	    sep2 => ",",
+	    fmt => sub {
+		return substr($STR_s, $_[0] * length($STR_s) - 0.5, 1);
+	    },
+	},
+	e => {
+	    null => "__",
+	    sep1 => "",
+	    sep2 => ",",
+	    fmt => sub {
+		return substr($STR_e, int($_[0] * length($STR_e) / 2 - 0.5) * 2, 2);
+	    },
+	}
+    );
+    my $enc = $enc{$e} || croak("unsupported encoding $e");
+    my @res;
     for my $set (@$data) {
         my($min, $max) = @{$group->{$set->{group}}}{"min", "max"};
 	my $v = $set->{v};
 	for (@$v) {
 	    if (defined) {
 		if ($_ < $min || $_ > $max) {
-		    $_ = -1;
+		    $_ = $enc->{null};
 		}
 		elsif ($min == $max) {
-		    $_ = 0;
+		    $_ = $enc->{null};
 		}
 		else {
-		    $_ = 100 * ($_ - $min) / ($max - $min);
-		    $_ = sprintf "%.1f", $_ if $_ != int($_);
+		    $_ = $enc->{fmt}(($_ - $min) / ($max - $min));
 		}
 	    }
 	    else {
-		$_ = -1;
+		$_ = $enc->{null};
 	    }
 	}
-	push(@enc, join(",", @$v));
+	push(@res, join($enc->{sep1}, @$v));
     }
-    $param->{chd} = "t:" . join("|", @enc);
+    $param->{chd} = "$e:" . join($enc->{sep2}, @res);
 }
 
 sub _deep_copy {
@@ -252,6 +296,8 @@ of the following:
 
 =over
 
+=item data => $v1
+
 =item data => [$v1, $v2,...]
 
 =item data => [[$v1, $v2,...], [$v1, $v2,...], ...]
@@ -269,6 +315,14 @@ Defines the minimum and maximum value for the default group.
 =item group => { $name => { min => $min, max => $max }, ...},
 
 Define parameters for named data series groups.
+
+=item encoding => "t"
+
+=item encoding => "s"
+
+=item encoding => "e"
+
+Select what kind of data encoding you want to be used.
 
 =item title => $str
 

@@ -17,7 +17,7 @@ our %type_alias = (
     "horizontal-stacked-bars" => "bhs",
     "vertical-stacked-bars" => "bvs",
     "horizontal-grouped-bars" => "bhg",
-    "vertcal-grouped-bars" => "bvg",
+    "vertical-grouped-bars" => "bvg",
 
     "pie" => "p",
     "pie-3d" => "p3",
@@ -256,7 +256,7 @@ these URI are dereferenced.  Normally these URIs will be embedded as C<< <img
 src='$chart'> >> tags in HTML documents.
 
 The Google Chart service is described at L<http://code.google.com/apis/chart/>
-and these pages also define the API in terms of the parameterts these URIs
+and these pages also define the API in terms of the parameters these URIs
 take.  This module make it easier to generate URIs that conform to this API as
 it automatically takes care of data encoding and scaling, as well as hiding
 most of the cryptic parameter names that the API uses in order to generate
@@ -283,7 +283,7 @@ Charts page or one of the following more readable aliases:
     horizontal-stacked-bars
     vertical-stacked-bars
     horizontal-grouped-bars
-    vertcal-grouped-bars
+    vertical-grouped-bars
 
     pie
     pie-3d
@@ -326,7 +326,7 @@ The following data series properties can be provided.
 
 The "group" property can be used to group data series together.  Series that
 have the same group value belong to the same group.  Values in the same group
-are scaled based on the minimun and maximum data point provided in that group. 
+are scaled based on the minimum and maximum data point provided in that group. 
 Data series without a "group" property belong to the default group.
 
 =item min => $num
@@ -340,7 +340,7 @@ the relative size of the data points stay the same after scaling.
 
 The data points are scaled so that they are plotted relative to the ($min ..
 $max) range.  For example if the ($min .. $max) range is (5 .. 10) then a data
-point value of 7.5 is plotted in the midle of the chart area.
+point value of 7.5 is plotted in the middle of the chart area.
 
 =item group => { $name => { min => $min, max => $max }, ...},
 
@@ -354,7 +354,7 @@ up the minimum and maximum values used for scaling the data points.
 =item encoding => "e"
 
 Select what kind of data encoding you want to be used.   They differ in the
-resolution they provide and in their readablity and verbosity.  Resolution
+resolution they provide and in their readability and verbosity.  Resolution
 matters if you generate big charts.  Verbosity matters as some web client might
 refuse to dereference URLs that are too long.
 

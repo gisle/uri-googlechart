@@ -19,6 +19,8 @@ WriteMakefile(
             repository => 'http://github.com/gisle/uri-googlechart',
         }
     },
+
+    clean => { FILES => "eg.html" },
 );
 
 

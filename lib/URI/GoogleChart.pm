@@ -250,18 +250,31 @@ URI::GoogleChart - Generate Google Chart URIs
 
 =head1 DESCRIPTION
 
-This module provide a constructor function for Google Chart URIs.
+This module provide a constructor method for Google Chart URIs.  Google will
+serve back PNG images of charts controlled by the provided parameters when
+these URI are dereferenced.  Normally these URIs will be embedded as C<< <img
+src='$chart'> >> tags in HTML documents.
+
+The Google Chart service is described at L<http://code.google.com/apis/chart/>
+and these pages also define the API in terms of the parameterts these URIs
+take.  This module make it easier to generate URIs that conform to this API as
+it automatically takes care of data encoding and scaling, as well as hiding
+most of the cryptic parameter names that the API uses in order to generate
+shorter URIs.
+
+The following constructor method is provided:
 
 =over
 
 =item $uri = URI::GoogleChart->new( $type, $width, $height, %opt )
 
 The constructor method's 3 first arguments are mandatory and they define the
-type of chart to generate and the dimention of the image in pixels.
-The rest of the arguments are provided as key/value pairs.
+type of chart to generate and the dimension of the image in pixels.
+The rest of the arguments are provided as key/value pairs.  The return value
+is an HTTP L<URI> object, which can also be treated as a string.
 
-The $type can either be one of the type code documented at the Google Charts
-page or one of the following more readable aliases:
+The $type argument can either be one of the type code documented at the Google
+Charts page or one of the following more readable aliases:
 
     lines
     sparklines
@@ -283,30 +296,56 @@ page or one of the following more readable aliases:
     map
     google-o-meter
 
-The key/value pairs can either be one of the documented C<chXXX> codes or one
-of the following:
+The key/value pairs can either be one of the C<chXXX> codes documented on the
+Google Chart pages or one of the following:
 
 =over
 
-=item data => $v1
-
-=item data => [$v1, $v2,...]
+=item data => [{ v => [$v1, $v2,...], %opt }, ...]
 
 =item data => [[$v1, $v2,...], [$v1, $v2,...], ...]
 
-=item data => [{v => [$v1, $v2,...], %opt}, ...]
+=item data => [$v1, $v2,...]
 
-Provides the data to be charted.  Missing data points should be provided as C<undef>. 
+=item data => $v1
+
+The data to be charted is provided as an array of data series.  Each series is
+defined by a hash with the C<v> element being an array of data points in the
+series.  Missing data points should be provided as C<undef>.  Other hash
+elements can be provided to define various properties of the series.  These are
+described below.
+
+As a short hand when you don't need to define other properties besides the data
+points you can just provide an array of numbers instead of the series hash.
+
+As a short hand when you only have a single data series, you can just provide a
+single array of numbers, and finally if you only have a single number you can
+provide it without wrapping it in an array.
+
+The following data series properties can be provided.
+
+The "group" property can be used to group data series together.  Series that
+have the same group value belong to the same group.  Values in the same group
+are scaled based on the minimun and maximum data point provided in that group. 
+Data series without a "group" property belong to the default group.
 
 =item min => $num
 
 =item max => $num
 
-Defines the minimum and maximum value for the default group.
+Defines the minimum and maximum value for the default group.  If not provided
+the minimum and maximum is calculated from the data points belonging to this
+group.  Chart types that plot relative values make the default minimum 0 so
+the relative size of the data points stay the same after scaling.
+
+The data points are scaled so that they are plotted relative to the ($min ..
+$max) range.  For example if the ($min .. $max) range is (5 .. 10) then a data
+point value of 7.5 is plotted in the midle of the chart area.
 
 =item group => { $name => { min => $min, max => $max }, ...},
 
-Define parameters for named data series groups.
+Define parameters for named data series groups.  Currently you can only set
+up the minimum and maximum values used for scaling the data points.
 
 =item encoding => "t"
 
@@ -314,19 +353,37 @@ Define parameters for named data series groups.
 
 =item encoding => "e"
 
-Select what kind of data encoding you want to be used.
+Select what kind of data encoding you want to be used.   They differ in the
+resolution they provide and in their readablity and verbosity.  Resolution
+matters if you generate big charts.  Verbosity matters as some web client might
+refuse to dereference URLs that are too long.
+
+The "t" encoding is the most readable and verbose.  It might consume up to 5
+bytes per data point. It provide a resolution of 1/1000.
+
+The "s" encoding is the most compact; only consuming 1 byte per data point.  It
+provide a resolution of 1/62.
+
+The "e" encoding provides the most resolution and it consumes 2 bytes per data
+point.  It provide a resolution of 1/4096.
+
+The default encoding is currently "t"; but expect this to change.  The default
+ought to be automatically selected based on the resolution of the chart and
+the number of data points provided.
 
 =item title => $str
 
 =item title => { text => $str, color => $color, fontsize => $fontsize }
 
-Sets the title for the chart; optionally changing the color and fontsize used.
+Sets the title for the chart; optionally changing the color and fontsize used
+for the title.
 
 =item margin => $num
 
 =item margin => { left => $n, right => $n, top => $n, bottom => $n }
 
-Sets the chart margin
+Sets the chart margins in pixels.  If a single number is provided then all
+the margins are set to this number of pixels.
 
 =back
 
@@ -337,3 +394,10 @@ Sets the chart margin
 L<http://code.google.com/apis/chart/>
 
 L<URI>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2009 Gisle Aas.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.

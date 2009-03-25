@@ -27,8 +27,15 @@ our %TYPE_ALIAS = (
     "scatter-plot" => "s",
     "radar" => "r",
     "radar-splines" => "rs",
-    "map" => "t",
     "google-o-meter" => "gom",
+
+    "africa" => "t",
+    "asia" => "t",
+    "europe" => "t",
+    "middle_east" => "t",
+    "south_america" => "t",
+    "usa" => "t",
+    "world" => "t",
 );
 
 our %COLOR_ALIAS = (
@@ -62,12 +69,11 @@ sub new {
     croak("Chart type not provided") unless $type;
     croak("Chart size not provided") unless $width && $height;
 
-    $type = $TYPE_ALIAS{$type} || $type;
-
     my %param = (
-	cht => $type,
+	cht => $TYPE_ALIAS{$type} || $type,
 	chs => join("x", $width, $height),
     );
+    $param{chtm} = $type if $param{cht} eq "t" && $type ne "t";  # maps
 
     my %handle = (
 	data => \&_data,
@@ -130,7 +136,7 @@ sub new {
 }
 
 sub _sort_chart_keys {
-    my %o = ( cht => 1, chs => 2 );
+    my %o = ( cht => 1, chtm => 2, chs => 3 );
     return sort { ($o{$a}||=99) <=> ($o{$b}||=99) || $a cmp $b } @_;
 }
 
@@ -317,8 +323,15 @@ Charts page or one of the following more readable aliases:
     scatter-plot
     radar
     radar-splines
-    map
     google-o-meter
+
+    world
+    africa
+    asia
+    europe
+    middle_east
+    south_america
+    usa
 
 The key/value pairs can either be one of the C<chXXX> codes documented on the
 Google Chart pages or one of the following:

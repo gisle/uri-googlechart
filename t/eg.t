@@ -79,6 +79,7 @@ chart("vertical-grouped-bars", 300, 125,
 );
 
 chart("gom", 125, 80, data => 80, chl => 80, title => "Awsomness");
+chart("usa", 200, 100);
 
 
 print $fh <<EOT;

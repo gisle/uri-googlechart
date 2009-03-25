@@ -2,7 +2,7 @@
 
 use strict;
 use Test;
-plan tests => 6;
+plan tests => 7;
 
 use URI::GoogleChart;
 
@@ -46,3 +46,6 @@ $u = URI::GoogleChart->new("lines", 200, 200,
     data => [3,1,2],
 );
 ok($u, "http://chart.apis.google.com/chart?cht=lc&chs=200x200&chd=t:30,10,20");
+
+$u = URI::GoogleChart->new("europe", 440, 220);
+ok($u, "http://chart.apis.google.com/chart?cht=t&chtm=europe&chs=440x220");

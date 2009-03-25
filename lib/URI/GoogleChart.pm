@@ -9,24 +9,60 @@ use Carp qw(croak);
 
 my $base = "http://chart.apis.google.com/chart";
 
+our %type_alias = (
+    "lines" => "lc",
+    "sparklines" => "ls",
+    "xy-lines" => "lxy",
+
+    "horizontal-stacked-bars" => "bhs",
+    "vertical-stacked-bars" => "bvs",
+    "horizontal-grouped-bars" => "bhg",
+    "vertcal-grouped-bars" => "bvg",
+
+    "pie" => "p",
+    "pie-3d" => "p3",
+    "concentric-pie" => "pc",
+
+    "venn" => "v",
+    "scatter-plot" => "s",
+    "radar" => "r",
+    "radar-splines" => "rs",
+    "map" => "t",
+    "google-o-meter" => "gom",
+);
+
 sub new {
     my($class, $type, $width, $height, %opt) = @_;
 
     croak("Chart type not provided") unless $type;
     croak("Chart size not provided") unless $width && $height;
 
-    my $data = delete $opt{data};
+    $type = $type_alias{$type} || $type;
 
-    my $self = bless {
-	p => {
-	    cht => $type,
-	    chs => join("x", $width, $height),
-	    %opt,
-	},
-    }, $class;
-    $self->data(@$data) if $data;
+    my %param = (
+	cht => $type,
+	chs => join("x", $width, $height),
+    );
 
-    return $self;
+    for (keys %opt) {
+	# ...
+    }
+
+    # generate URI
+    my $uri = URI->new($base);
+    $uri->query_form(map { $_ => $param{$_} } _sort_chart_keys(keys %param));
+    for ($uri->query) {
+	s/%3A/:/g;
+	s/%2C/,/g;
+	s/%7C/|/g;
+	$uri->query($_);
+    }
+    return $uri;
+}
+
+sub _sort_chart_keys {
+    my %o = ( cht => 1, chs => 2 );
+    return sort { ($o{$a}||=99) <=> ($o{$b}||=99) || $a cmp $b } @_;
 }
 
 sub default_minmax {
@@ -107,23 +143,6 @@ sub data {
 	push(@enc, join(",", @v));
     }
     $self->{p}{chd} = "t:" . join("|", @enc);
-}
-
-sub as_uri {
-    my $self = shift;
-    my $u = URI->new($base);
-    $u->query_form($self->param);
-    $u = $u->as_string;
-    $u =~ s/%3A/:/g;
-    $u =~ s/%2C/,/g;
-    $u =~ s/%7C/|/g;
-    return $u;
-}
-
-sub param {
-    my $self = shift;
-    my $p = $self->{p};
-    return map { $_ => $p->{$_} } sort keys %$p;
 }
 
 1;

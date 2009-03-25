@@ -5,7 +5,7 @@ use strict;
 our $VERSION = "0.01";
 
 use URI;
-use Carp qw(croak);
+use Carp qw(croak carp);
 
 my $base = "http://chart.apis.google.com/chart";
 
@@ -44,8 +44,38 @@ sub new {
 	chs => join("x", $width, $height),
     );
 
-    for (keys %opt) {
-	# ...
+    my %handle = (
+	data => \&_data,
+	group => 1,
+	min => 1,
+	max => 1,
+
+	title => sub {
+	    my $title = shift; 
+	    ($title, my($color, $size)) = @$title if ref($title) eq "ARRAY";
+	    $param{chtt} = $title;
+	    if (defined($color) || defined($size)) {
+		$color = "" unless defined $color;
+		$size = "" unless defined $size;
+		$param{chts} = "$color,$size";
+	    }
+	},
+	margin => sub {
+	    my $m = shift;
+	    $m = [($m) x 4] unless ref($m);
+	    $param{chma} = join(",", @$m);
+	}
+    );
+
+    for my $k (keys %opt) {
+	if (my $h = $handle{$k}) {
+	    $h->($opt{$k}, \%param, \%opt) if ref($h) eq "CODE";
+	}
+	else {
+	    $param{$k} = $opt{$k};
+	    carp("Unrecognized parameter '$k' embedded in GoogleChart URI")
+		unless $k =~ /^ch/;
+	}
     }
 
     # generate URI
@@ -65,9 +95,9 @@ sub _sort_chart_keys {
     return sort { ($o{$a}||=99) <=> ($o{$b}||=99) || $a cmp $b } @_;
 }
 
-sub default_minmax {
-    my $self = shift;
-    my $t = $self->{p}{cht};
+sub _default_minmax {
+    my $param = shift;
+    my $t = $param->{cht};
     return 0, undef if $t =~ /^p/;  # pie chart
     return 0, undef if $t eq "v";   # venn
     return 0, undef if $t =~ /^r/;  # radar chart
@@ -76,16 +106,24 @@ sub default_minmax {
     return;
 }
 
-sub data {
-    my $self = shift;
-    my @data = ref($_[0]) ? @_ : \@_;
+sub _data {
+    my($data, $param, $opt) = @_;
+    if (ref($data) eq "ARRAY") {
+	$data = [$data] unless ref($data->[0]);
+    }
+    elsif (ref($data) eq "HASH") {
+	$data = [$data];
+    }
+    else {
+	$data = [[$data]];
+    }
     my %group;
-    for my $set (@data) {
+    for my $set (@$data) {
 	$set = { v => $set } if ref($set) eq "ARRAY";
 	my $v = $set->{v};
 	my $g = $set->{group} ||= "";
 
-	my($min, $max) = $self->default_minmax;
+	my($min, $max) = _default_minmax($param);
 	for (@$v) {
 	    next unless defined;
 	    $min = $_ if !defined($min) || $_ < $min;
@@ -114,13 +152,9 @@ sub data {
 	}
     }
 
-    # save these; mostly for debugging purposes
-    $self->{data} = \@data;
-    $self->{group} = \%group;
-
     # encode data
     my @enc;
-    for my $set (@data) {
+    for my $set (@$data) {
 	my @v = @{$set->{v}};
         my($min, $max) = @{$group{$set->{group}}}{"min", "max"};
 	for (@v) {
@@ -142,7 +176,7 @@ sub data {
 	}
 	push(@enc, join(",", @v));
     }
-    $self->{p}{chd} = "t:" . join("|", @enc);
+    $param->{chd} = "t:" . join("|", @enc);
 }
 
 1;

@@ -7,9 +7,9 @@ our $VERSION = "0.01";
 use URI;
 use Carp qw(croak carp);
 
-my $base = "http://chart.apis.google.com/chart";
+my $BASE = "http://chart.apis.google.com/chart";
 
-our %type_alias = (
+our %TYPE_ALIAS = (
     "lines" => "lc",
     "sparklines" => "ls",
     "xy-lines" => "lxy",
@@ -31,7 +31,7 @@ our %type_alias = (
     "google-o-meter" => "gom",
 );
 
-our %color_alias = (
+our %COLOR_ALIAS = (
     "red" => "FF0000",
     "blue" => "0000FF",
     "green" => "00FF00",
@@ -40,13 +40,29 @@ our %color_alias = (
     "transparent" => "FFFFFFFF",
 );
 
+# constants for data encoding
+my @C = ("A" .. "Z", "a" .. "z", 0 .. 9, "-", ".");
+my $STR_s = join("", @C[0 .. 61]);
+my $STR_e = do {
+    my @v;
+    for my $x (@C) {
+	for my $y (@C) {
+	    push(@v, "$x$y");
+	}
+    }
+    join("", @v);
+};
+die unless length($STR_s) == 62;
+die unless length($STR_e) == 4096 * 2;
+
+
 sub new {
     my($class, $type, $width, $height, %opt) = @_;
 
     croak("Chart type not provided") unless $type;
     croak("Chart size not provided") unless $width && $height;
 
-    $type = $type_alias{$type} || $type;
+    $type = $TYPE_ALIAS{$type} || $type;
 
     my %param = (
 	cht => $type,
@@ -64,7 +80,7 @@ sub new {
 	    my $v = shift;
 	    $v = [$v] unless ref($v);
 	    for (@$v) {
-		if (my $c = $color_alias{$_}) {
+		if (my $c = $COLOR_ALIAS{$_}) {
 		    $_ = $c;
 		}
 		elsif (/^[\da-fA-F]{3}\z/) {
@@ -102,7 +118,7 @@ sub new {
     }
 
     # generate URI
-    my $uri = URI->new($base);
+    my $uri = URI->new($BASE);
     $uri->query_form(map { $_ => $param{$_} } _sort_chart_keys(keys %param));
     for ($uri->query) {
 	s/%3A/:/g;
@@ -186,20 +202,6 @@ sub _data {
     #use Data::Dump; dd $group;
 
     # encode data
-    my @C = ("A" .. "Z", "a" .. "z", 0 .. 9, "-", ".");
-    my $STR_s = join("", @C[0 .. 61]);
-    my $STR_e = do {
-	my @v;
-	for my $x (@C) {
-            for my $y (@C) {
-		push(@v, "$x$y");
-	    }
-	}
-	join("", @v);
-    };
-    die unless length($STR_s) == 62;
-    die unless length($STR_e) == 4096 * 2;
-
     my $e = $opt->{encoding} || "t";
     my %enc = (
 	t => {

@@ -22,6 +22,9 @@ print $fh <<EOT;
   .even {
     background-color: #edf5ff;
   }
+  pre {
+    font-weight: bold;
+  }
   .uri {
     font-size: smaller;
   }
@@ -91,9 +94,31 @@ ok(close($fh));
 
 my $count;
 sub chart {
+    my $uri = URI::GoogleChart->new(@_);
+
     $count++;
     my $class = "eg";
     $class .= " even" if $count % 2 == 0;
-    my $uri = URI::GoogleChart->new(@_);
-    print $fh qq(<div class="$class"><span class="uri">$uri</span><br><img src='$uri'></div>\n);
+
+    (undef, undef, my $line) = caller;
+    seek(DATA, 0, 0);
+    <DATA> while --$line;
+    my $src = <DATA>;
+    unless ($src =~ /;$/) {
+	while (<DATA>) {
+	    $src .= $_;
+	    last if /^\);/;
+	}
+    }
+    $src =~ s/^chart/URI::GoogleChart->new/;
+
+    print $fh <<EOT
+  <div class="$class">
+    <pre class="src">$src</pre>
+    <div><img src='$uri'></div>
+    <span class="uri">$uri</span>
+  </div>
+EOT
 }
+
+__END__

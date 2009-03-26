@@ -1,4 +1,6 @@
 lib/URI/GoogleChart.pm
 Makefile.PL
 MANIFEST
+README
 t/basic.t
+t/eg.t

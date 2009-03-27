@@ -148,7 +148,7 @@ DESCRIPTION
             fontsize used for the title.
 
         margin => $num
-        margin => { left => $n, right => $n, top => $n, bottom => $n }
+        margin => [ $left, $right, $top, $bottom ]
             Sets the chart margins in pixels. If a single number is provided
             then all the margins are set to this number of pixels.
 

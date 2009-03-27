@@ -15,27 +15,45 @@ print $fh <<EOT;
   body {
     margin: 20px 50px;
     background-color: #ddd;
+    max-width: 700px;
+    font-family: sans-serif;
   }
   div.eg {
-    padding: 10px;
+    background-color: #eee;
+    padding: 10px 20px;
+    border: 1px solid #aaa;
+    margin: 30px 0;
+    -webkit-box-shadow: 5px 5px 5px #aaa;
   }
   .even {
     background-color: #edf5ff;
   }
   pre {
+    margin: 0px;
     font-weight: bold;
   }
   .uri {
-    font-size: smaller;
+    font-size: x-small;
   }
   img {
-    border: 1px solid #888;
-    padding: 4px;
+    border: 1px solid #aaa;
+    padding: 5px;
+    margin: 15px;
   }
   </style>
 </head>
+
 <body>
 <h1>URI::GoogleChart Examples</h1>
+
+<p> This page shows Perl code snippets using the <a
+href="http://search.cpan.org/dist/URI-GoogleChart">URI::GoogleChart</a> module
+to generate chart URLs and the corresponding images that the <a
+href="http://code.google.com/apis/chart/">Google Chart service</a> generate
+from them.
+
+</p>
+
 EOT
 
 chart("pie-3d", 250, 100,
@@ -86,6 +104,8 @@ chart("usa", 200, 100);
 
 
 print $fh <<EOT;
+
+<p style="font-size: small;">Page generated with URI::GoogleChart v$URI::GoogleChart::VERSION</p>
 </body>
 </html>
 EOT
@@ -110,7 +130,7 @@ sub chart {
 	    last if /^\);/;
 	}
     }
-    $src =~ s/^chart/URI::GoogleChart->new/;
+    $src =~ s/^chart/\$u = URI::GoogleChart->new/;
 
     print $fh <<EOT
   <div class="$class">

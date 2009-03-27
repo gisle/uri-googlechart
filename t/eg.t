@@ -38,7 +38,7 @@ print $fh <<EOT;
   img {
     border: 1px solid #aaa;
     padding: 5px;
-    margin: 15px;
+    margin: 15px 0;
   }
   </style>
 </head>

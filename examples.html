@@ -53,7 +53,20 @@ from them.
     <div><img src='http://chart.apis.google.com/chart?cht=p3&chs=250x100&chd=t:100,66.7&chl=Hello%7CWorld'></div>
     <span class="uri">http://chart.apis.google.com/chart?cht=p3&chs=250x100&chd=t:100,66.7&chl=Hello%7CWorld</span>
   </div>
-  <div class="eg even">
+  <div class="eg">
+    <pre class="src">$u = URI::GoogleChart->new("pie", 500, 150,
+    data => [80, 20],
+    color => ["yellow", "black"],
+    chl => "Resembes Pack-man|Does not resemble Pac-man",
+    chf => "bg,s,000000",
+    chp => 0.6,
+    margin => [0, 30, 10, 10],
+);
+</pre>
+    <div><img src='http://chart.apis.google.com/chart?cht=p&chs=500x150&chco=FFFF00,000000&chd=t:100,25&chf=bg,s,000000&chl=Resembes+Pack-man%7CDoes+not+resemble+Pac-man&chma=0,30,10,10&chp=0.6'></div>
+    <span class="uri">http://chart.apis.google.com/chart?cht=p&chs=500x150&chco=FFFF00,000000&chd=t:100,25&chf=bg,s,000000&chl=Resembes+Pack-man%7CDoes+not+resemble+Pac-man&chma=0,30,10,10&chp=0.6</span>
+  </div>
+  <div class="eg">
     <pre class="src">$u = URI::GoogleChart->new("lines", 200, 125,
     data => [40,60,60,45,47,75,70,72,],
     min => 0, max => 100,
@@ -71,7 +84,7 @@ from them.
     <div><img src='http://chart.apis.google.com/chart?cht=ls&chs=200x125&chd=t:27,25,60,31,25,39,25,31,26,28.0,80,28.0,27,31,27,29.0,26,35,70,25'></div>
     <span class="uri">http://chart.apis.google.com/chart?cht=ls&chs=200x125&chd=t:27,25,60,31,25,39,25,31,26,28.0,80,28.0,27,31,27,29.0,26,35,70,25</span>
   </div>
-  <div class="eg even">
+  <div class="eg">
     <pre class="src">$u = URI::GoogleChart->new("lxy", 200, 125,
     data => [
         [10,20,40,80,90,95,99],
@@ -98,7 +111,7 @@ from them.
     <div><img src='http://chart.apis.google.com/chart?cht=bhs&chs=200x150&chco=3072F3,ff0000&chd=t:5,25,30,40,20%7C25,30,50,20,10'></div>
     <span class="uri">http://chart.apis.google.com/chart?cht=bhs&chs=200x150&chco=3072F3,ff0000&chd=t:5,25,30,40,20%7C25,30,50,20,10</span>
   </div>
-  <div class="eg even">
+  <div class="eg">
     <pre class="src">$u = URI::GoogleChart->new("vertical-grouped-bars", 300, 125,
     data => [
         [10,50,60,80,40],
@@ -117,11 +130,23 @@ from them.
     <div><img src='http://chart.apis.google.com/chart?cht=gom&chs=125x80&chd=t:80&chl=80&chtt=Awsomness'></div>
     <span class="uri">http://chart.apis.google.com/chart?cht=gom&chs=125x80&chd=t:80&chl=80&chtt=Awsomness</span>
   </div>
-  <div class="eg even">
+  <div class="eg">
     <pre class="src">$u = URI::GoogleChart->new("usa", 200, 100);
 </pre>
     <div><img src='http://chart.apis.google.com/chart?cht=t&chtm=usa&chs=200x100'></div>
     <span class="uri">http://chart.apis.google.com/chart?cht=t&chtm=usa&chs=200x100</span>
+  </div>
+  <div class="eg">
+    <pre class="src">$u = URI::GoogleChart->new("europe", 300, 150,
+    color => ["white", "green", "red"],
+    chf => "bg,s,EAF7FE", # water
+    # nordic populations 
+    chld => "NOSEDKFIIS",
+    data => [4.5e6, 9e6, 5.3e6, 5.1e6, 307261],
+);
+</pre>
+    <div><img src='http://chart.apis.google.com/chart?cht=t&chtm=europe&chs=300x150&chco=FFFFFF,00FF00,FF0000&chd=t:48.2,100,57.4,55.1,0&chf=bg,s,EAF7FE&chld=NOSEDKFIIS'></div>
+    <span class="uri">http://chart.apis.google.com/chart?cht=t&chtm=europe&chs=300x150&chco=FFFFFF,00FF00,FF0000&chd=t:48.2,100,57.4,55.1,0&chf=bg,s,EAF7FE&chld=NOSEDKFIIS</span>
   </div>
 
 <p style="font-size: small;">Page generated with URI::GoogleChart v0.02</p>

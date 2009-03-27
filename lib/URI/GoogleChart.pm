@@ -42,6 +42,7 @@ our %COLOR_ALIAS = (
     "red" => "FF0000",
     "blue" => "0000FF",
     "green" => "00FF00",
+    "yellow" => "FFFF00",
     "white" => "FFFFFF",
     "black" => "000000",
     "transparent" => "FFFFFFFF",
@@ -427,7 +428,7 @@ for the title.
 
 =item margin => $num
 
-=item margin => { left => $n, right => $n, top => $n, bottom => $n }
+=item margin => [ $left, $right, $top, $bottom ]
 
 Sets the chart margins in pixels.  If a single number is provided then all
 the margins are set to this number of pixels.

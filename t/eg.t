@@ -61,6 +61,15 @@ chart("pie-3d", 250, 100,
     chl => "Hello|World",
 );
 
+chart("pie", 500, 150,
+    data => [80, 20],
+    color => ["yellow", "black"],
+    chl => "Resembes Pack-man|Does not resemble Pac-man",
+    chf => "bg,s,000000",
+    chp => 0.6,
+    margin => [0, 30, 10, 10],
+);
+
 chart("lines", 200, 125,
     data => [40,60,60,45,47,75,70,72,],
     min => 0, max => 100,
@@ -100,7 +109,16 @@ chart("vertical-grouped-bars", 300, 125,
 );
 
 chart("gom", 125, 80, data => 80, chl => 80, title => "Awsomness");
+
 chart("usa", 200, 100);
+
+chart("europe", 300, 150,
+    color => ["white", "green", "red"],
+    chf => "bg,s,EAF7FE", # water
+    # nordic populations 
+    chld => "NOSEDKFIIS",
+    data => [4.5e6, 9e6, 5.3e6, 5.1e6, 307261],
+);
 
 
 print $fh <<EOT;
@@ -112,13 +130,8 @@ EOT
 
 ok(close($fh));
 
-my $count;
 sub chart {
     my $uri = URI::GoogleChart->new(@_);
-
-    $count++;
-    my $class = "eg";
-    $class .= " even" if $count % 2 == 0;
 
     (undef, undef, my $line) = caller;
     seek(DATA, 0, 0);
@@ -133,7 +146,7 @@ sub chart {
     $src =~ s/^chart/\$u = URI::GoogleChart->new/;
 
     print $fh <<EOT
-  <div class="$class">
+  <div class="eg">
     <pre class="src">$src</pre>
     <div><img src='$uri'></div>
     <span class="uri">$uri</span>

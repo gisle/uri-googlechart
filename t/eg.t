@@ -6,7 +6,7 @@ plan tests => 1;
 
 use URI::GoogleChart;
 
-open(my $fh, ">", "eg.html") || die "Can't create eg.html: $!";
+open(my $fh, ">", "examples.html") || die "Can't create examples.html: $!";
 print $fh <<EOT;
 <html>
 <head>

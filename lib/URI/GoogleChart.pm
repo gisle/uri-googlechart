@@ -21,6 +21,7 @@ our %TYPE_ALIAS = (
 
     "pie" => "p",
     "pie-3d" => "p3",
+    "3d-pie" => "p3",
     "concentric-pie" => "pc",
 
     "venn" => "v",

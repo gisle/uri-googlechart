@@ -66,8 +66,16 @@ chart("pie", 500, 150,
     color => ["yellow", "black"],
     label => ["Resembes Pack-man", "Does not resemble Pac-man"],
     chf => "bg,s,000000",
-    chp => 0.6,
+    rotate => 35,
     margin => [0, 30, 10, 10],
+);
+
+chart("pie", 250, 200,
+    data => [(1) x 12],
+    rotate => -90,
+    label => [1 .. 12],
+    encoding => "s",
+    chf => "bg,s,00000000",
 );
 
 chart("lines", 200, 125,

@@ -115,6 +115,12 @@ sub new {
 	    my $k = $param{cht} =~ /^p|^gom$/ ? "chl" : "chdl";
 	    $param{$k} = join("|", @$lab);
 	},
+	rotate => sub {
+	    my $p = shift;
+	    $p += 360 while $p < 0;
+	    $p /= 180 / 3.1416;  # convert to radians
+	    $param{chp} = sprintf "%.2f", $p;
+	},
 	margin => sub {
 	    my $m = shift;
 	    $m = [($m) x 4] unless ref($m);
@@ -440,6 +446,14 @@ for the title.
 =item label = [ $str, $str,... ]
 
 Labels the data (or data series) of the chart.
+
+=item rotate => $degrees
+
+Rotate the orientation of a pie chart (clockwise).
+
+The first slice starts at the right side of the pie (at 3 o'clock).  If you
+rotate the pie 90 degrees the first slice starts at the bottom.  If you rotate
+-90 degrees (or 270) the first slices starts at the top of the pie. 
 
 =item margin => $num
 

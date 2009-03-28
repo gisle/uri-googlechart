@@ -289,7 +289,7 @@ sub _data {
     if ($param->{cht} =~ /^b/) {
         my($min, $max) = @{$group->{""}}{"min", "max"};
 	if ($min < 0) {
-	    $param->{chp} = sprintf "%.2f", -$min / ($max - $min);
+	    $param->{chp} = $max < 0 ? 1 : sprintf "%.2f", -$min / ($max - $min);
 	}
     }
 }

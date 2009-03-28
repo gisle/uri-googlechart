@@ -65,7 +65,7 @@ chart("pie", 500, 150,
     data => [80, 20],
     color => ["yellow", "black"],
     label => ["Resembes Pack-man", "Does not resemble Pac-man"],
-    chf => "bg,s,000000",
+    background => "black",
     rotate => 35,
     margin => [0, 30, 10, 10],
 );
@@ -75,7 +75,7 @@ chart("pie", 250, 200,
     rotate => -90,
     label => [1 .. 12],
     encoding => "s",
-    chf => "bg,s,00000000",
+    background => "transparent",
 );
 
 chart("lines", 200, 125,
@@ -133,7 +133,7 @@ chart("usa", 200, 100);
 
 chart("europe", 300, 150,
     color => ["white", "green", "red"],
-    chf => "bg,s,EAF7FE", # water
+    background => "EAF7FE", # water blue
     # nordic populations 
     chld => "NOSEDKFIIS",
     data => [4.5e6, 9e6, 5.3e6, 5.1e6, 307261],

@@ -46,7 +46,7 @@ our %COLOR_ALIAS = (
     "yellow" => "FFFF00",
     "white" => "FFFFFF",
     "black" => "000000",
-    "transparent" => "FFFFFFFF",
+    "transparent" => "00000000",
 );
 
 # constants for data encoding
@@ -87,15 +87,10 @@ sub new {
 	color => sub {
 	    my $v = shift;
 	    $v = [$v] unless ref($v);
-	    for (@$v) {
-		if (my $c = $COLOR_ALIAS{$_}) {
-		    $_ = $c;
-		}
-		elsif (/^[\da-fA-F]{3}\z/) {
-		    $_ = join("", map "$_$_", split(//, $_));
-		}
-	    }
-	    $param{chco} = join(",", @$v);
+	    $param{chco} = join(",", map _color($_), @$v);
+	},
+	background => sub {
+	    $param{chf} = "bg,s," . _color(shift);
 	},
 	title => sub {
 	    my $title = shift; 
@@ -104,7 +99,7 @@ sub new {
 	    $title =~ s/\n/|/g;
 	    $param{chtt} = $title;
 	    if (defined($color) || defined($size)) {
-		$color = "" unless defined $color;
+		$color = defined($color) ? _color($color) : "";
 		$size = "" unless defined $size;
 		$param{chts} = "$color,$size";
 	    }
@@ -149,6 +144,12 @@ sub new {
 	$uri->query($_);
     }
     return $uri;
+}
+
+sub _color {
+    local $_ = shift;
+    return $COLOR_ALIAS{$_} ||
+	(/^[\da-fA-F]{3}\z/ ? join("", map "$_$_", split(//, $_)) : $_);
 }
 
 sub _sort_chart_keys {
@@ -433,6 +434,12 @@ $color is hexstrings either of "RRGGBB" or "RRGGBBAA" form.  When you use this
 interface you might also use "RGB" form as well as some comon names like "red",
 "blue", "green", "white", "black",... which are expanded to the canonical form
 in the URI.
+
+=item background => $color
+
+Sets the color for the chart background.  See description for color above for
+how to specify color values.  The color value "transparent" gives you a fully
+transparent background.
 
 =item title => $str
 

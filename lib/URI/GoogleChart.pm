@@ -99,6 +99,8 @@ sub new {
 	title => sub {
 	    my $title = shift; 
 	    ($title, my($color, $size)) = @$title if ref($title) eq "ARRAY";
+	    $title =~ s/\n+\z//;
+	    $title =~ s/\n/|/g;
 	    $param{chtt} = $title;
 	    if (defined($color) || defined($size)) {
 		$color = "" unless defined $color;
@@ -427,7 +429,7 @@ in the URI.
 
 =item title => $str
 
-=item title => { text => $str, color => $color, fontsize => $fontsize }
+=item $title => [ $str, $color, $fontsize ]
 
 Sets the title for the chart; optionally changing the color and fontsize used
 for the title.

@@ -40,12 +40,26 @@ our %TYPE_ALIAS = (
 );
 
 our %COLOR_ALIAS = (
-    "red" => "FF0000",
-    "blue" => "0000FF",
-    "green" => "00FF00",
-    "yellow" => "FFFF00",
-    "white" => "FFFFFF",
-    "black" => "000000",
+    "red"     => "FF0000",
+    "lime"    => "00FF00",
+    "blue"    => "0000FF",
+
+    "green"   => "008000",
+    "navy"    => "000080",
+
+    "yellow"  => "FFFF00",
+    "aqua"    => "00FFFF",
+    "fuchsia" => "FF00FF",
+    "maroon"  => "800000",
+    "purple"  => "800080",
+    "olive"   => "808000",
+    "teal"    => "008080",
+
+    "white"   => "FFFFFF",
+    "silver"  => "C0C0C0",
+    "gray"    => "808080",
+    "black"   => "000000",
+
     "transparent" => "00000000",
 );
 
@@ -434,6 +448,14 @@ $color is hexstrings either of "RRGGBB" or "RRGGBBAA" form.  When you use this
 interface you might also use "RGB" form as well as some comon names like "red",
 "blue", "green", "white", "black",... which are expanded to the canonical form
 in the URI.
+
+The built in colors are the 16 colors of the HTML specification
+(see L<http://en.wikipedia.org/wiki/HTML_color_names>).
+If you want to use additional color names you can just assign your mapping to
+the %URI::GoogleChart::COLOR_ALIAS hash before start creating charts.  Example:
+
+    local $URI::GoogleChart::COLOR_ALIAS{"gold"} = "FFD700";
+
 
 =item background => $color
 

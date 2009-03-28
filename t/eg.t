@@ -109,6 +109,12 @@ chart("vertical-grouped-bars", 300, 125,
     chco => "3072F3,ff0000",
 );
 
+chart("venn", 200, 100,
+    data => [100, 20, 20, 20, 20, 0, 0],
+    color => ["red", "green", "blue"],
+    label => ["First", "Second", "Third"],
+);
+
 chart("gom", 125, 80,
     data => 80,
     label => 80,

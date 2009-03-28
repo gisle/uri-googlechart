@@ -117,6 +117,13 @@ chart("vertical-grouped-bars", 300, 125,
     chco => "3072F3,ff0000",
 );
 
+chart("vertical-stacked-bars", 150, 120,
+    data => [10, -10, -5, 25, 15, 5],
+    chbh => "a",
+    color => "gray",
+    margin => 5,
+);
+
 chart("venn", 200, 100,
     data => [100, 20, 20, 20, 20, 0, 0],
     color => ["red", "lime", "blue"],

@@ -284,6 +284,14 @@ sub _data {
 	push(@res, join($enc->{sep1}, @$v));
     }
     $param->{chd} = "$e:" . join($enc->{sep2}, @res);
+
+    # handle bar chart zero line if we charted negative data
+    if ($param->{cht} =~ /^b/) {
+        my($min, $max) = @{$group->{""}}{"min", "max"};
+	if ($min < 0) {
+	    $param->{chp} = sprintf "%.2f", -$min / ($max - $min);
+	}
+    }
 }
 
 sub _deep_copy {

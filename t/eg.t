@@ -58,13 +58,13 @@ EOT
 
 chart("pie-3d", 250, 100,
     data => [60, 40],
-    chl => "Hello|World",
+    label => ["Hello", "World"],
 );
 
 chart("pie", 500, 150,
     data => [80, 20],
     color => ["yellow", "black"],
-    chl => "Resembes Pack-man|Does not resemble Pac-man",
+    label => ["Resembes Pack-man", "Does not resemble Pac-man"],
     chf => "bg,s,000000",
     chp => 0.6,
     margin => [0, 30, 10, 10],
@@ -80,13 +80,14 @@ chart("sparklines", 200, 125,
     min => 0, max => 100,
 );
 
-chart("lxy", 200, 125,
+chart("lxy", 250, 125,
     data => [
         [10,20,40,80,90,95,99],
 	[20,30,40,50,60,70,80],
         [undef],
         [5,25,45,65,85],
     ],
+    label => ["blue", "red"],
     color => [qw(3072F3 red)],
 );
 
@@ -108,7 +109,11 @@ chart("vertical-grouped-bars", 300, 125,
     chco => "3072F3,ff0000",
 );
 
-chart("gom", 125, 80, data => 80, chl => 80, title => "Awsomness");
+chart("gom", 125, 80,
+    data => 80,
+    label => 80,
+    title => "Awsomness",
+);
 
 chart("usa", 200, 100);
 

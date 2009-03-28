@@ -106,6 +106,12 @@ sub new {
 		$param{chts} = "$color,$size";
 	    }
 	},
+	label => sub {
+	    my $lab = shift;
+	    $lab = [$lab] unless ref($lab) eq "ARRAY";
+	    my $k = $param{cht} =~ /^p|^gom$/ ? "chl" : "chdl";
+	    $param{$k} = join("|", @$lab);
+	},
 	margin => sub {
 	    my $m = shift;
 	    $m = [($m) x 4] unless ref($m);
@@ -425,6 +431,12 @@ in the URI.
 
 Sets the title for the chart; optionally changing the color and fontsize used
 for the title.
+
+=item label = $str
+
+=item label = [ $str, $str,... ]
+
+Labels the data (or data series) of the chart.
 
 =item margin => $num
 

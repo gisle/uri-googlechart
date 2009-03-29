@@ -103,6 +103,7 @@ sub new {
 	group => 1,
 	min => 1,
 	max => 1,
+	round => 1,
 	show_range => 1,
 	encoding => 1,
 
@@ -206,7 +207,7 @@ sub _data {
     }
 
     my $group = _deep_copy($opt->{group});
-    for (qw(min max show_range)) {
+    for (qw(min max round show_range)) {
 	$group->{""}{$_} = $opt->{$_} if exists $opt->{$_};
     }
 
@@ -242,6 +243,31 @@ sub _data {
 		}
 	    }
 	}
+    }
+
+    # should we round any of the ranges
+    for my $g (values %$group) {
+	next unless $g->{round};
+
+	use POSIX qw(floor ceil);
+	sub log10 { log(shift) / log(10) }
+
+	my($min, $max) = @$g{"min", "max"};
+	my $range = $max - $min;
+	next if $range == 0;
+	die "Assert" if $range < 0; 
+
+	my $step = 10 ** int(log10($range));
+	$step /= 10 if $step / $range >= 0.1;
+	$step *= 5 if $step / $range < 0.05;
+
+	$min = floor($min / $step - 1) * $step;
+	$max = ceil($max / $step + 1) * $step;
+
+	# zero based minimum is usually a good thing so make it more likely
+	$min = 0 if $min > 0 && $min/$range < 0.4;
+
+	@$g{"min", "max"} = ($min, $max);
     }
 
     #use Data::Dump; dd $data;
@@ -447,6 +473,12 @@ The data points are scaled so that they are plotted relative to the ($min ..
 $max) range.  For example if the ($min .. $max) range is (5 .. 10) then a data
 point value of 7.5 is plotted in the middle of the chart area.
 
+=item round => $bool
+
+Extend the range for the default group so that the min/max values are nice
+multiples of 1, 5, 10, 50, 100,... and such numbers.  This looks the chart more
+"air" and look better if you display the range of values with show_range.
+
 =item show_range => "left"
 
 =item show_range => "right"
@@ -459,7 +491,7 @@ The range is ($min .. $max).
 Define parameters for named data series groups.  The group named "" is the
 default group.
 
-The option values that can be set are "min", "max", "show_range".  See the
+The option values that can be set are "min", "max", "round", "show_range".  See the
 description of the corresponding entry for the default group above.
 
 =item encoding => "t"

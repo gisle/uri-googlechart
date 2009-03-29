@@ -63,6 +63,13 @@ our %COLOR_ALIAS = (
     "transparent" => "00000000",
 );
 
+our %AXIS_ALIAS = (
+    "left"   => "y",
+    "right"  => "r",
+    "top"    => "t",
+    "bottom" => "y",
+);
+
 # constants for data encoding
 my @C = ("A" .. "Z", "a" .. "z", 0 .. 9, "-", ".");
 my $STR_s = join("", @C[0 .. 61]);
@@ -96,6 +103,7 @@ sub new {
 	group => 1,
 	min => 1,
 	max => 1,
+	show_range => 1,
 	encoding => 1,
 
 	color => sub {
@@ -198,8 +206,9 @@ sub _data {
     }
 
     my $group = _deep_copy($opt->{group});
-    $group->{""}{min} = $opt->{min};
-    $group->{""}{max} = $opt->{max};
+    for (qw(min max show_range)) {
+	$group->{""}{$_} = $opt->{$_} if exists $opt->{$_};
+    }
 
     for my $set (@$data) {
 	$set = { v => $set } if ref($set) eq "ARRAY";
@@ -290,6 +299,26 @@ sub _data {
         my($min, $max) = @{$group->{""}}{"min", "max"};
 	if ($min < 0) {
 	    $param->{chp} = $max < 0 ? 1 : sprintf "%.2f", -$min / ($max - $min);
+	}
+    }
+
+    # enable axis labels?
+    for (sort keys %$group) {
+	my $g = $group->{$_};
+	my @chxt = split(/,/, $param->{chxt} || "");
+	my @chxr;
+	if (my $r = $g->{show_range}) {
+	    my($min, $max) = @$g{"min", "max"};
+	    for ($min, $max) {
+		$_ = sprintf "%.2g", $_;
+	    }
+	    push(@chxt, $AXIS_ALIAS{$r} || $r);
+	    my $i = $#chxt;
+	    push(@chxr, "$i,$min,$max");
+	}
+	if (@chxt) {
+	    $param->{chxt} = join(",", @chxt);
+	    $param->{chxr} = join("|", @chxr);
 	}
     }
 }
@@ -418,10 +447,20 @@ The data points are scaled so that they are plotted relative to the ($min ..
 $max) range.  For example if the ($min .. $max) range is (5 .. 10) then a data
 point value of 7.5 is plotted in the middle of the chart area.
 
-=item group => { $name => { min => $min, max => $max }, ...},
+=item show_range => "left"
 
-Define parameters for named data series groups.  Currently you can only set
-up the minimum and maximum values used for scaling the data points.
+=item show_range => "right"
+
+Makes the given axis show the range of values charted for the default group.
+The range is ($min .. $max).
+
+=item group => { $name => \%opt, ...},
+
+Define parameters for named data series groups.  The group named "" is the
+default group.
+
+The option values that can be set are "min", "max", "show_range".  See the
+description of the corresponding entry for the default group above.
 
 =item encoding => "t"
 

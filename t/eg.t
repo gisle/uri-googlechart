@@ -80,7 +80,7 @@ chart("pie", 250, 200,
 
 chart("lines", 200, 125,
     data => [40,60,60,45,47,75,70,72,],
-    min => 0, max => 100,
+    show_range => "left",
 );
 
 chart("sparklines", 200, 125,

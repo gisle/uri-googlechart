@@ -70,6 +70,12 @@ our %AXIS_ALIAS = (
     "bottom" => "y",
 );
 
+our %ENCODING_ALIAS = (
+    "text"     => "t",
+    "simple"   => "s",
+    "extended" => "e",
+);
+
 # constants for data encoding
 my @C = ("A" .. "Z", "a" .. "z", 0 .. 9, "-", ".");
 my $STR_s = join("", @C[0 .. 61]);
@@ -274,7 +280,7 @@ sub _data {
     #use Data::Dump; dd $group;
 
     # encode data
-    my $e = $opt->{encoding} || "t";
+    my $e = $ENCODING_ALIAS{$opt->{encoding} || ""} || $opt->{encoding} || "t";
     my %enc = (
 	t => {
 	    null => -1,
@@ -505,14 +511,14 @@ resolution they provide and in their readability and verbosity.  Resolution
 matters if you generate big charts.  Verbosity matters as some web client might
 refuse to dereference URLs that are too long.
 
-The "t" encoding is the most readable and verbose.  It might consume up to 5
-bytes per data point. It provide a resolution of 1/1000.
+The "t" (or "text") encoding is the most readable and verbose.  It might
+consume up to 5 bytes per data point. It provide a resolution of 1/1000.
 
-The "s" encoding is the most compact; only consuming 1 byte per data point.  It
-provide a resolution of 1/62.
+The "s" (or "simple") encoding is the most compact; only consuming 1 byte per
+data point.  It provide a resolution of 1/62.
 
-The "e" encoding provides the most resolution and it consumes 2 bytes per data
-point.  It provide a resolution of 1/4096.
+The "e" (or "extended") encoding provides the most resolution and it consumes 2
+bytes per data point.  It provide a resolution of 1/4096.
 
 The default encoding is currently "t"; but expect this to change.  The default
 ought to be automatically selected based on the resolution of the chart and

@@ -179,6 +179,7 @@ sub chart {
 	}
     }
     $src =~ s/^chart/\$u = URI::GoogleChart->new/;
+    $uri =~ s/&/&amp;/g;
 
     print $fh <<EOT
   <div class="eg">

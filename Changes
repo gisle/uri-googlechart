@@ -1,4 +1,16 @@
 _______________________________________________________________________________
+2009-03-30  Release 0.03
+
+Added the options 'label', 'rotate', 'background', 'range_round' and
+'range_show'.
+
+Handle bar chars zero line automatically.
+
+Improved documentation.
+
+
+
+_______________________________________________________________________________
 2009-03-27  Release 0.02
 
 Include examples.html in the distribution and fixup the documentation of

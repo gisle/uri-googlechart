@@ -261,8 +261,8 @@ sub _data {
 	$step /= 10 if $step / $range >= 0.1;
 	$step *= 5 if $step / $range < 0.05;
 
-	$min = floor($min / $step - 1) * $step;
-	$max = ceil($max / $step + 1) * $step;
+	$min = floor($min / $step - 0.2) * $step;
+	$max = ceil($max / $step + 0.2) * $step;
 
 	# zero based minimum is usually a good thing so make it more likely
 	$min = 0 if $min > 0 && $min/$range < 0.4;

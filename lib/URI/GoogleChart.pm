@@ -378,19 +378,33 @@ URI::GoogleChart - Generate Google Chart URIs
      data => [45, 80, 100, 33],
  );
 
+ # save chart to a file
+ use LWP::Simple qw(getstore);
+ getstore($chart, "chart.png");
+
+ # or embed chart in an HTML file
+ use HTML::Entities;
+ my $enc_chart = encode_entities($chart);
+
+ open(my $fh, ">", "chart.html") || die;
+ print $fh qq(
+     <h1>My Chart</h1>
+     <p><img src="$enc_chart"></p>
+ );
+ close($fh) || die;
+
 =head1 DESCRIPTION
 
-This module provide a constructor method for Google Chart URIs.  Google will
-serve back PNG images of charts controlled by the provided parameters when
-these URI are dereferenced.  Normally these URIs will be embedded as C<< <img
-src='$chart'> >> tags in HTML documents.
+This module provide a constructor method for Google Chart URLs.  When
+dereferenced Google will serve back PNG images of charts described by the
+provided parameters.
 
 The Google Chart service is described at L<http://code.google.com/apis/chart/>
-and these pages also define the API in terms of the parameters these URIs
-take.  This module make it easier to generate URIs that conform to this API as
+and these pages also define the Web API in terms of the parameters these URLs
+take.  This module make it easier to generate URLs that conform to this API as
 it automatically takes care of data encoding and scaling, as well as hiding
 most of the cryptic parameter names that the API uses in order to generate
-shorter URIs.
+shorter URLs.
 
 The following constructor method is provided:
 
@@ -398,9 +412,9 @@ The following constructor method is provided:
 
 =item $uri = URI::GoogleChart->new( $type, $width, $height, %opt )
 
-The constructor method's 3 first arguments are mandatory and they define the
+The constructor method's first 3 arguments are mandatory and they define the
 type of chart to generate and the dimension of the image in pixels.
-The rest of the arguments are provided as key/value pairs.  The return value
+Additional arguments are provided as key/value pairs.  The return value
 is an HTTP L<URI> object, which can also be treated as a string.
 
 The $type argument can either be one of the type code documented at the Google
@@ -433,8 +447,9 @@ Charts page or one of the following more readable aliases:
     south_america
     usa
 
-The key/value pairs can either be one of the C<chXXX> codes documented on the
-Google Chart pages or one of the following:
+The additional arguments in the form of key/value pairs can either be one of
+the C<chXXX> parameters documented on the Google Chart pages or one of the
+following:
 
 =over
 
@@ -453,9 +468,9 @@ elements can be provided to define various properties of the series.  These are
 described below.
 
 As a short hand when you don't need to define other properties besides the data
-points you can just provide an array of numbers instead of the series hash.
+points you can provide an array of numbers instead of the series hash.
 
-As a short hand when you only have a single data series, you can just provide a
+As a short hand when you only have a single data series, you can provide a
 single array of numbers, and finally if you only have a single number you can
 provide it without wrapping it in an array.
 
@@ -532,11 +547,11 @@ Sets the colors to use for charting the data series.  The canonical form for
 $color is hexstrings either of "RRGGBB" or "RRGGBBAA" form.  When you use this
 interface you might also use "RGB" form as well as some comon names like "red",
 "blue", "green", "white", "black",... which are expanded to the canonical form
-in the URI.
+in the URL.
 
 The built in colors are the 16 colors of the HTML specification
 (see L<http://en.wikipedia.org/wiki/HTML_color_names>).
-If you want to use additional color names you can just assign your mapping to
+If you want to use additional color names you can assign your mapping to
 the %URI::GoogleChart::COLOR_ALIAS hash before start creating charts.  Example:
 
     local $URI::GoogleChart::COLOR_ALIAS{"gold"} = "FFD700";

@@ -80,13 +80,13 @@ chart("pie", 250, 200,
 
 chart("lines", 200, 125,
     data => [37,60,60,45,47,74,70,72,],
-    show_range => "left",
-    round => 1,
+    range_show => "left",
+    range_round => 1,
 );
 
 chart("sparklines", 200, 75,
     data => [27,25,60,31,25,39,25,31,26,28,80,28,27,31,27,29,26,35,70,25],
-    round => 1,
+    range_round => 1,
 );
 
 chart("lxy", 250, 125,

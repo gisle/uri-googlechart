@@ -106,11 +106,11 @@ sub new {
 
     my %handle = (
 	data => \&_data,
-	group => 1,
+	range => 1,
 	min => 1,
 	max => 1,
-	round => 1,
-	show_range => 1,
+	range_round => 1,
+	range_show => 1,
 	encoding => 1,
 
 	color => sub {
@@ -212,15 +212,16 @@ sub _data {
 	$data = [[$data]];
     }
 
-    my $group = _deep_copy($opt->{group});
-    for (qw(min max round show_range)) {
-	$group->{""}{$_} = $opt->{$_} if exists $opt->{$_};
+    my $range = _deep_copy($opt->{range});
+    for (qw(min max range_round range_show)) {
+	(my $r = $_) =~ s/^range_//;
+	$range->{""}{$r} = $opt->{$_} if exists $opt->{$_};
     }
 
     for my $set (@$data) {
 	$set = { v => $set } if ref($set) eq "ARRAY";
 	my $v = $set->{v};
-	my $g = $set->{group} ||= "";
+	my $g = $set->{range} ||= "";
 
 	my($min, $max) = _default_minmax($param);
 	for (@$v) {
@@ -239,20 +240,20 @@ sub _data {
 		    $set->{$k} = $h{$k};
 		}
 
-		my $gv = $group->{$g}{$k};
+		my $gv = $range->{$g}{$k};
 		if (!defined($gv) ||
 		    ($k eq "min" && $h{$k} < $gv) ||
 		    ($k eq "max" && $h{$k} > $gv)
 		   )
 		{
-		    $group->{$g}{$k} = $h{$k};
+		    $range->{$g}{$k} = $h{$k};
 		}
 	    }
 	}
     }
 
     # should we round any of the ranges
-    for my $g (values %$group) {
+    for my $g (values %$range) {
 	next unless $g->{round};
 
 	use POSIX qw(floor ceil);
@@ -277,7 +278,7 @@ sub _data {
     }
 
     #use Data::Dump; dd $data;
-    #use Data::Dump; dd $group;
+    #use Data::Dump; dd $range;
 
     # encode data
     my $e = $ENCODING_ALIAS{$opt->{encoding} || ""} || $opt->{encoding} || "t";
@@ -312,7 +313,7 @@ sub _data {
     my $enc = $enc{$e} || croak("unsupported encoding $e");
     my @res;
     for my $set (@$data) {
-        my($min, $max) = @{$group->{$set->{group}}}{"min", "max"};
+        my($min, $max) = @{$range->{$set->{range}}}{"min", "max"};
 	my $v = $set->{v};
 	for (@$v) {
 	    if (defined($_) && $_ >= $min && $_ <= $max && $min != $max) {
@@ -328,18 +329,18 @@ sub _data {
 
     # handle bar chart zero line if we charted negative data
     if ($param->{cht} =~ /^b/) {
-        my($min, $max) = @{$group->{""}}{"min", "max"};
+        my($min, $max) = @{$range->{""}}{"min", "max"};
 	if ($min < 0) {
 	    $param->{chp} = $max < 0 ? 1 : sprintf "%.2f", -$min / ($max - $min);
 	}
     }
 
     # enable axis labels?
-    for (sort keys %$group) {
-	my $g = $group->{$_};
+    for (sort keys %$range) {
+	my $g = $range->{$_};
 	my @chxt = split(/,/, $param->{chxt} || "");
 	my @chxr;
-	if (my $r = $g->{show_range}) {
+	if (my $r = $g->{show}) {
 	    my($min, $max) = @$g{"min", "max"};
 	    for ($min, $max) {
 		$_ = sprintf "%.2g", $_;
@@ -461,11 +462,11 @@ following:
 
 =item data => $v1
 
-The data to be charted is provided as an array of data series.  Each series is
-defined by a hash with the C<v> element being an array of data points in the
-series.  Missing data points should be provided as C<undef>.  Other hash
-elements can be provided to define various properties of the series.  These are
-described below.
+The data to be charted is provided as an array of data series.  In the most
+general form each series is defined by a hash with the "v" element being an
+array of data points (numbers) in the series.  Missing data points should be
+provided as C<undef>.  Other hash elements can be provided to define various
+properties of the series.  These are described below.
 
 As a short hand when you don't need to define other properties besides the data
 points you can provide an array of numbers instead of the series hash.
@@ -474,46 +475,59 @@ As a short hand when you only have a single data series, you can provide a
 single array of numbers, and finally if you only have a single number you can
 provide it without wrapping it in an array.
 
-The following data series properties can be provided.
+Data series belong to ranges.  A range is defined by a minimum and a maximum
+value.  Data points are scaled so that they are plotted relative to the range
+they belong to.  For example if the range is (5 .. 10) then a data point value
+of 7.5 is plotted in the middle of the chart area.  Ranges are automatically
+calculated based on the data provided, but you can also force certain minimum
+and maximum values to apply.
 
-The "group" property can be used to group data series together.  Series that
-have the same group value belong to the same group.  Values in the same group
-are scaled based on the minimum and maximum data point provided in that group. 
-Data series without a "group" property belong to the default group.
+The following data series properties can be provided in addition to "v"
+described above:
+
+The "range" property can be used to group data series together that belong to
+the same range.  The value of the "range" property is a range name.  Data
+series without a "range" property belong to the default range.
 
 =item min => $num
 
 =item max => $num
 
-Defines the minimum and maximum value for the default group.  If not provided
-the minimum and maximum is calculated from the data points belonging to this
-group.  Chart types that plot relative values make the default minimum 0 so
-the relative size of the data points stay the same after scaling.
+Defines the default minimum and maximum value for the default range.  If not
+provided the minimum and maximum is calculated from the data points belonging
+to this range.
 
-The data points are scaled so that they are plotted relative to the ($min ..
-$max) range.  For example if the ($min .. $max) range is (5 .. 10) then a data
-point value of 7.5 is plotted in the middle of the chart area.
+The specified minimum or maximum are ignored if some of data values provided
+are outside this range.
 
-=item round => $bool
+Chart types that plot relative values (like bar charts or venn diagrams) should
+use 0 as the minimum, as this make the relative size of the data points stay
+the same after scaling.  Because of this the default default minimum for these
+charts is 0, so you don't actually need to specify it.
 
-Extend the range for the default group so that the min/max values are nice
-multiples of 1, 5, 10, 50, 100,... and such numbers.  This looks the chart more
-"air" and look better if you display the range of values with show_range.
+=item range_round => $bool
 
-=item show_range => "left"
+Extend the default range so that the min/max values are nice
+multiples of 1, 5, 10, 50, 100,... and such numbers.  This gives the chart more
+"air" and look better if you display the range of values with "range_show".
 
-=item show_range => "right"
+=item range_show => "left"
 
-Makes the given axis show the range of values charted for the default group.
-The range is ($min .. $max).
+=item range_show => "right"
 
-=item group => { $name => \%opt, ...},
+=item range_show => "top"
 
-Define parameters for named data series groups.  The group named "" is the
-default group.
+=item range_show => "bottom"
 
-The option values that can be set are "min", "max", "round", "show_range".  See the
-description of the corresponding entry for the default group above.
+Makes the given axis show the range of values charted for the default range.
+
+=item range => { $name => \%opt, ...},
+
+Define parameters for named data series ranges.  The range named "" is the
+default range.
+
+The option values that can be set are "min", "max", "round", "show".  See the
+description of the corresponding entry for the default range above.
 
 =item encoding => "t"
 
@@ -565,7 +579,7 @@ transparent background.
 
 =item title => $str
 
-=item $title => [ $str, $color, $fontsize ]
+=item title => [ $str, $color, $fontsize ]
 
 Sets the title for the chart; optionally changing the color and fontsize used
 for the title.

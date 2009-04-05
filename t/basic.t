@@ -17,7 +17,7 @@ $u = URI::GoogleChart->new("lines", 200, 200,
     encoding => "t",
     chfoo => "bar",
 );
-ok($u, "http://chart.apis.google.com/chart?cht=lc&chs=200x200&chd=t:100,0,50&chfoo=bar&chma=5,5,5,5&chtt=foo");
+ok($u, "http://chart.apis.google.com/chart?cht=lc&chs=200x200&chfoo=bar&chma=5,5,5,5&chtt=foo&chd=t:100,0,50");
 
 $u = URI::GoogleChart->new("lines", 200, 200,
     data => [3,1,2],
@@ -25,7 +25,7 @@ $u = URI::GoogleChart->new("lines", 200, 200,
     margin => 5,
     encoding => "s",
 );
-ok($u, "http://chart.apis.google.com/chart?cht=lc&chs=200x200&chd=s:9Ae&chma=5,5,5,5&chtt=foo");
+ok($u, "http://chart.apis.google.com/chart?cht=lc&chs=200x200&chma=5,5,5,5&chtt=foo&chd=s:9Ae");
 
 $u = URI::GoogleChart->new("lines", 200, 200,
     data => [3,1,2],
@@ -33,7 +33,7 @@ $u = URI::GoogleChart->new("lines", 200, 200,
     margin => 5,
     encoding => "e",
 );
-ok($u, "http://chart.apis.google.com/chart?cht=lc&chs=200x200&chd=e:..AAf.&chma=5,5,5,5&chtt=foo");
+ok($u, "http://chart.apis.google.com/chart?cht=lc&chs=200x200&chma=5,5,5,5&chtt=foo&chd=e:..AAf.");
 
 $u = URI::GoogleChart->new("lines", 200, 200,
     min => 0,

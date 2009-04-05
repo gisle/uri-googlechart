@@ -184,7 +184,7 @@ sub _color {
 }
 
 sub _sort_chart_keys {
-    my %o = ( cht => 1, chtm => 2, chs => 3 );
+    my %o = ( cht => 1, chtm => 2, chs => 3, chd => 100 );
     return sort { ($o{$a}||=99) <=> ($o{$b}||=99) || $a cmp $b } @_;
 }
 

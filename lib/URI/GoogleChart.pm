@@ -152,6 +152,7 @@ sub new {
 	}
     );
 
+    my $data = delete $opt{data};  # need to be processed last
     for my $k (keys %opt) {
 	if (my $h = $handle{$k}) {
 	    $h->($opt{$k}, \%param, \%opt) if ref($h) eq "CODE";
@@ -162,6 +163,7 @@ sub new {
 		unless $k =~ /^ch/;
 	}
     }
+    _data($data, \%param, \%opt) if $data;
 
     # generate URI
     my $uri = URI->new($BASE);

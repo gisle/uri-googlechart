@@ -1,4 +1,14 @@
 _______________________________________________________________________________
+2009-04-05  Release 0.04
+
+The handling of some of the parameters were unreliable as it depended on the
+perl hash key ordering.
+
+Move the 'chd' parameter last so it gets out of the way
+
+
+
+_______________________________________________________________________________
 2009-03-30  Release 0.03
 
 Added the options 'label', 'rotate', 'background', 'range_round' and

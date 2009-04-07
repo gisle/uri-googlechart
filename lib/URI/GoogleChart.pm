@@ -220,16 +220,41 @@ sub _data {
 	$range->{""}{$r} = $opt->{$_} if exists $opt->{$_};
     }
 
+    my %stacked;
     for my $set (@$data) {
 	$set = { v => $set } if ref($set) eq "ARRAY";
 	my $v = $set->{v};
 	my $g = $set->{range} ||= "";
 
 	my($min, $max) = _default_minmax($param);
+	my $i = 0;
 	for (@$v) {
 	    next unless defined;
 	    $min = $_ if !defined($min) || $_ < $min;
 	    $max = $_ if !defined($max) || $_ > $max;
+	    if ($param->{cht} =~ /^b.s\z/) {
+		# stacked stuff
+		$stacked{min}[$i] ||= 0;
+		$stacked{max}[$i] ||= 0;
+		$stacked{$_ < 0 ? "min" : "max"}[$i] += $_;
+	    }
+	}
+	continue {
+	    $i++;
+	}
+	if (%stacked) {
+	    ($min, $max) = (0, 0);
+	    for (qw(min max)) {
+		for my $v (@{$stacked{$_}}) {
+		    next unless defined $v;
+		    if ($_ eq "min") {
+			$min = $v if $v < $min;
+		    }
+		    else {
+			$max = $v if $v > $max;
+		    }
+		}
+	    }
 	}
 
 	if (defined $min) {

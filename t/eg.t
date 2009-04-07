@@ -105,7 +105,6 @@ chart("horizontal-stacked-bars", 200, 150,
         [10,50,60,80,40],
 	[50,60,100,40,20],
     ],
-    min => 0, max => 200,
     color => [qw(3072F3 f00)],
 );
 
@@ -114,7 +113,6 @@ chart("vertical-grouped-bars", 300, 125,
         [10,50,60,80,40],
 	[50,60,100,40,20],
     ],
-    min => 0, max => 100,
     chco => "3072F3,ff0000",
 );
 
@@ -127,7 +125,6 @@ chart("vertical-stacked-bars", 150, 120,
 
 chart("vertical-stacked-bars", 150, 120,
     data => [-10, -10, -5, -25, -15, -5],
-    max => 0,
     chbh => "a",
     color => "gray",
     margin => 5,

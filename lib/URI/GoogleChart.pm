@@ -291,7 +291,7 @@ sub _data {
 	    sep2 => "|",
 	    fmt => sub {
 		my $v = 100 * shift;
-		$v = sprintf "%.1f", $v if $v != int($v);
+		$v = sprintf "%.1f", $v if $v ne int($v);
 		$v;
 	    },
 	},

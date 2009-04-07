@@ -106,21 +106,24 @@ chart("horizontal-stacked-bars", 200, 150,
 	[50,60,100,40,20],
     ],
     color => [qw(3072F3 f00)],
+    range_show => "bottom",
 );
 
-chart("vertical-grouped-bars", 300, 125,
+chart("vertical-grouped-bars", 320, 125,
     data => [
         [10,50,60,80,40],
 	[50,60,100,40,20],
     ],
     chco => "3072F3,ff0000",
+    range_show => "left",
 );
 
 chart("vertical-stacked-bars", 150, 120,
-    data => [10, -10, -5, 25, 15, 5],
+    data => [10, -10, -5, 30, 15, 5],
     chbh => "a",
     color => "gray",
     margin => 5,
+    range_show => "left",
 );
 
 chart("vertical-stacked-bars", 150, 120,
@@ -128,6 +131,7 @@ chart("vertical-stacked-bars", 150, 120,
     chbh => "a",
     color => "gray",
     margin => 5,
+    range_show => "left",
 );
 
 chart("venn", 200, 100,

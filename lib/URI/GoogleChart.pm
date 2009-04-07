@@ -67,7 +67,7 @@ our %AXIS_ALIAS = (
     "left"   => "y",
     "right"  => "r",
     "top"    => "t",
-    "bottom" => "y",
+    "bottom" => "x",
 );
 
 our %ENCODING_ALIAS = (

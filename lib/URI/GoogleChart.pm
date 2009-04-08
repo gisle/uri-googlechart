@@ -427,7 +427,7 @@ URI::GoogleChart - Generate Google Chart URIs
 =head1 DESCRIPTION
 
 This module provide a constructor method for Google Chart URLs.  When
-dereferenced Google will serve back PNG images of charts described by the
+dereferenced Google will serve back PNG images of charts based on the
 provided parameters.
 
 The Google Chart service is described at L<http://code.google.com/apis/chart/>

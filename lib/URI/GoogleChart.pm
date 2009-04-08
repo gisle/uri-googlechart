@@ -237,7 +237,7 @@ sub _data {
 		# stacked stuff
 		$rh->{stacked}{min}[$i] ||= 0;
 		$rh->{stacked}{max}[$i] ||= 0;
-		$rh->{stacked}{stacked}{$_ < 0 ? "min" : "max"}[$i] += $_;
+		$rh->{stacked}{$_ < 0 ? "min" : "max"}[$i] += $_;
 	    }
 	}
 	continue {

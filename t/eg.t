@@ -2,11 +2,16 @@
 
 use strict;
 use Test;
-plan tests => 1;
+plan tests => 2;
 
 use URI::GoogleChart;
 
-open(my $fh, ">", "examples.html") || die "Can't create examples.html: $!";
+my $outfile = "examples.html";
+my $newfile = $outfile;
+$newfile .= ".new" if -f $newfile;
+
+open(my $fh, ">", $newfile) || die "Can't create $newfile: $!";
+binmode($fh);
 print $fh <<EOT;
 <html>
 <head>
@@ -166,6 +171,14 @@ EOT
 
 ok(close($fh));
 
+if ($newfile ne $outfile) {
+    ok(file_content($newfile), file_content($outfile));
+    unlink($newfile);
+}
+else {
+    skip("Regenerating $outfile");
+}
+
 sub chart {
     my $uri = URI::GoogleChart->new(@_);
 
@@ -189,6 +202,13 @@ sub chart {
     <span class="uri">$uri</span>
   </div>
 EOT
+}
+
+sub file_content {
+    my $filename = shift;
+    open(my $fh, "<", $filename) || return undef;
+    binmode($fh);
+    return do { local $/; readline($fh) }
 }
 
 __END__

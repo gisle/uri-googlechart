@@ -220,6 +220,7 @@ sub _data {
 	$range->{""}{$r} = $opt->{$_} if exists $opt->{$_};
     }
 
+    my $vcount = 0;
     for my $set (@$data) {
 	$set = { v => $set } if ref($set) eq "ARRAY";
 	my $v = $set->{v};
@@ -242,6 +243,7 @@ sub _data {
 	continue {
 	    $i++;
 	}
+	$vcount += @$v;
 
 	if ($rh->{stacked}) {
 	    # XXX we really only need to this after we have processed
@@ -311,7 +313,24 @@ sub _data {
     #use Data::Dump; dd $range;
 
     # encode data
-    my $e = $ENCODING_ALIAS{$opt->{encoding} || ""} || $opt->{encoding} || "t";
+    my $e = $ENCODING_ALIAS{$opt->{encoding} || ""} || $opt->{encoding};
+    unless ($e) {
+	# try to me a little smart about selecting a suitable encoding based
+	# on the number of data points we're plotting and the resolution of
+	# the generated image
+	my @s = ($param->{chs} =~ /(\d+)/g);
+	my $res = $s[0] * $s[1];
+	if ($vcount < 20) {
+	    $e = "t";
+	}
+	elsif ($vcount > 256 || $res < 300*200) {
+	    $e = "s";
+	}
+	else {
+	    $e = "e";
+	}
+    }
+
     my %enc = (
 	t => {
 	    null => -1,
@@ -579,9 +598,8 @@ data point.  It provide a resolution of 1/62.
 The "e" (or "extended") encoding provides the most resolution and it consumes 2
 bytes per data point.  It provide a resolution of 1/4096.
 
-The default encoding is currently "t"; but expect this to change.  The default
-ought to be automatically selected based on the resolution of the chart and
-the number of data points provided.
+The default encoding is  automatically selected based on the resolution of the
+chart and the number of data points provided.
 
 =item color => $color
 

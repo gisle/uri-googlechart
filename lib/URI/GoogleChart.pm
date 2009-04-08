@@ -220,11 +220,11 @@ sub _data {
 	$range->{""}{$r} = $opt->{$_} if exists $opt->{$_};
     }
 
-    my %stacked;
     for my $set (@$data) {
 	$set = { v => $set } if ref($set) eq "ARRAY";
 	my $v = $set->{v};
 	my $g = $set->{range} ||= "";
+	my $gh = $range->{$g} ||= {};
 
 	my($min, $max) = _default_minmax($param);
 	my $i = 0;
@@ -234,18 +234,21 @@ sub _data {
 	    $max = $_ if !defined($max) || $_ > $max;
 	    if ($param->{cht} =~ /^b.s\z/) {
 		# stacked stuff
-		$stacked{min}[$i] ||= 0;
-		$stacked{max}[$i] ||= 0;
-		$stacked{$_ < 0 ? "min" : "max"}[$i] += $_;
+		$gh->{stacked}{min}[$i] ||= 0;
+		$gh->{stacked}{max}[$i] ||= 0;
+		$gh->{stacked}{stacked}{$_ < 0 ? "min" : "max"}[$i] += $_;
 	    }
 	}
 	continue {
 	    $i++;
 	}
-	if (%stacked) {
+
+	if ($gh->{stacked}) {
+	    # XXX we really only need to this after we have processed
+	    # the last dataset, the other rounds it's wasted effort
 	    ($min, $max) = (0, 0);
 	    for (qw(min max)) {
-		for my $v (@{$stacked{$_}}) {
+		for my $v (@{$gh->{stacked}{$_}}) {
 		    next unless defined $v;
 		    if ($_ eq "min") {
 			$min = $v if $v < $min;
@@ -267,13 +270,13 @@ sub _data {
 		    $set->{$k} = $h{$k};
 		}
 
-		my $gv = $range->{$g}{$k};
+		my $gv = $gh->{$k};
 		if (!defined($gv) ||
 		    ($k eq "min" && $h{$k} < $gv) ||
 		    ($k eq "max" && $h{$k} > $gv)
 		   )
 		{
-		    $range->{$g}{$k} = $h{$k};
+		    $gh->{$k} = $h{$k};
 		}
 	    }
 	}

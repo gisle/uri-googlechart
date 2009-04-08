@@ -223,8 +223,8 @@ sub _data {
     for my $set (@$data) {
 	$set = { v => $set } if ref($set) eq "ARRAY";
 	my $v = $set->{v};
-	my $g = $set->{range} ||= "";
-	my $gh = $range->{$g} ||= {};
+	my $r = $set->{range} ||= "";
+	my $rh = $range->{$r} ||= {};
 
 	my($min, $max) = _default_minmax($param);
 	my $i = 0;
@@ -234,21 +234,21 @@ sub _data {
 	    $max = $_ if !defined($max) || $_ > $max;
 	    if ($param->{cht} =~ /^b.s\z/) {
 		# stacked stuff
-		$gh->{stacked}{min}[$i] ||= 0;
-		$gh->{stacked}{max}[$i] ||= 0;
-		$gh->{stacked}{stacked}{$_ < 0 ? "min" : "max"}[$i] += $_;
+		$rh->{stacked}{min}[$i] ||= 0;
+		$rh->{stacked}{max}[$i] ||= 0;
+		$rh->{stacked}{stacked}{$_ < 0 ? "min" : "max"}[$i] += $_;
 	    }
 	}
 	continue {
 	    $i++;
 	}
 
-	if ($gh->{stacked}) {
+	if ($rh->{stacked}) {
 	    # XXX we really only need to this after we have processed
 	    # the last dataset, the other rounds it's wasted effort
 	    ($min, $max) = (0, 0);
 	    for (qw(min max)) {
-		for my $v (@{$gh->{stacked}{$_}}) {
+		for my $v (@{$rh->{stacked}{$_}}) {
 		    next unless defined $v;
 		    if ($_ eq "min") {
 			$min = $v if $v < $min;
@@ -270,26 +270,26 @@ sub _data {
 		    $set->{$k} = $h{$k};
 		}
 
-		my $gv = $gh->{$k};
-		if (!defined($gv) ||
-		    ($k eq "min" && $h{$k} < $gv) ||
-		    ($k eq "max" && $h{$k} > $gv)
+		my $rv = $rh->{$k};
+		if (!defined($rv) ||
+		    ($k eq "min" && $h{$k} < $rv) ||
+		    ($k eq "max" && $h{$k} > $rv)
 		   )
 		{
-		    $gh->{$k} = $h{$k};
+		    $rh->{$k} = $h{$k};
 		}
 	    }
 	}
     }
 
     # should we round any of the ranges
-    for my $g (values %$range) {
-	next unless $g->{round};
+    for my $r (values %$range) {
+	next unless $r->{round};
 
 	use POSIX qw(floor ceil);
 	sub log10 { log(shift) / log(10) }
 
-	my($min, $max) = @$g{"min", "max"};
+	my($min, $max) = @$r{"min", "max"};
 	my $range = $max - $min;
 	next if $range == 0;
 	die "Assert" if $range < 0; 
@@ -304,7 +304,7 @@ sub _data {
 	# zero based minimum is usually a good thing so make it more likely
 	$min = 0 if $min > 0 && $min/$range < 0.4;
 
-	@$g{"min", "max"} = ($min, $max);
+	@$r{"min", "max"} = ($min, $max);
     }
 
     #use Data::Dump; dd $data;
@@ -367,15 +367,15 @@ sub _data {
 
     # enable axis labels?
     for (sort keys %$range) {
-	my $g = $range->{$_};
+	my $r = $range->{$_};
 	my @chxt = split(/,/, $param->{chxt} || "");
 	my @chxr;
-	if (my $r = $g->{show}) {
-	    my($min, $max) = @$g{"min", "max"};
+	if (my $rshow = $r->{show}) {
+	    my($min, $max) = @$r{"min", "max"};
 	    for ($min, $max) {
 		$_ = sprintf "%.2g", $_;
 	    }
-	    push(@chxt, $AXIS_ALIAS{$r} || $r);
+	    push(@chxt, $AXIS_ALIAS{$rshow} || $rshow);
 	    my $i = $#chxt;
 	    push(@chxr, "$i,$min,$max");
 	}

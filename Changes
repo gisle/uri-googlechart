@@ -1,4 +1,10 @@
 _______________________________________________________________________________
+2009-06-11  Release 1.01
+
+Doc tweak; regenerate the README file
+
+
+_______________________________________________________________________________
 2009-06-11  Release 1.00
 
 Gisle Aas (10):
@@ -14,7 +20,6 @@ Gisle Aas (10):
       Fix typos in the synopis example; show ranges
 
 
-
 _______________________________________________________________________________
 2009-04-05  Release 0.04
 
@@ -22,7 +27,6 @@ The handling of some of the parameters were unreliable as it depended on the
 perl hash key ordering.
 
 Move the 'chd' parameter last so it gets out of the way
-
 
 
 _______________________________________________________________________________
@@ -38,7 +42,6 @@ More color aliases.
 Improved documentation.
 
 
-
 _______________________________________________________________________________
 2009-03-27  Release 0.02
 
@@ -46,12 +49,10 @@ Include examples.html in the distribution and fixup the documentation of
 the margin option.
 
 
-
 _______________________________________________________________________________
 2009-03-26  Release 0.01
 
 Initial CPAN release
-
 
 
 _______________________________________________________________________________

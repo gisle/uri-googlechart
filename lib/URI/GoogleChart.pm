@@ -661,6 +661,8 @@ the margins are set to this number of pixels.
 
 =head1 SEE ALSO
 
+L<http://cpansearch.perl.org/src/GAAS/URI-GoogleChart-1.00/examples.html>
+
 L<http://code.google.com/apis/chart/>
 
 L<URI>

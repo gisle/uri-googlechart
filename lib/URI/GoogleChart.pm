@@ -423,9 +423,11 @@ URI::GoogleChart - Generate Google Chart URIs
 
 =head1 SYNOPSIS
 
- use URI::GoggleChart;
- my $chart = URI::GoogleChart->new("line", 300, 100,
-     data => [45, 80, 100, 33],
+ use URI::GoogleChart;
+ my $chart = URI::GoogleChart->new("lines", 300, 100,
+     data => [45, 80, 55, 68],
+     range_show => "left",
+     range_round => 1,
  );
 
  # save chart to a file

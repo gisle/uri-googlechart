@@ -1,4 +1,21 @@
 _______________________________________________________________________________
+2009-06-11  Release 1.00
+
+Gisle Aas (10):
+      Try string compare to figure out we have a round number
+      Automatically calculate range for stacked bars
+      range_show => "bottom" worked like "left"
+      The %stacked should really be a property of the range
+      Rename $g as $r to match the 'group' to 'range' renaming
+      Make it a regression test (do we generate the same example.html each time)
+      Trivial doc tweak
+      Autoselect the encoding to use
+      Fixed range brokenness for stacked bars
+      Fix typos in the synopis example; show ranges
+
+
+
+_______________________________________________________________________________
 2009-04-05  Release 0.04
 
 The handling of some of the parameters were unreliable as it depended on the

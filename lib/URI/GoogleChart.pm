@@ -2,7 +2,7 @@ package URI::GoogleChart;
 
 use strict;
 
-our $VERSION = "0.04";
+our $VERSION = "1.00";
 
 use URI;
 use Carp qw(croak carp);

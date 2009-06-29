@@ -388,7 +388,7 @@ sub _data {
     for (sort keys %$range) {
 	my $r = $range->{$_};
 	my @chxt = split(/,/, $param->{chxt} || "");
-	my @chxr;
+	my @chxr = split(/\|/, $param->{chxr} || "");
 	if (my $rshow = $r->{show}) {
 	    my($min, $max) = @$r{"min", "max"};
 	    for ($min, $max) {

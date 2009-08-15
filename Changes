@@ -1,4 +1,12 @@
 _______________________________________________________________________________
+2009-08-15  Release 1.02
+
+Gisle Aas (2):
+      Preserve earlier chxr parameter
+      Show example with 2 different datasets of different ranges
+
+
+_______________________________________________________________________________
 2009-06-11  Release 1.01
 
 Doc tweak; regenerate the README file

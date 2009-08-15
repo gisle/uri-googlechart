@@ -222,7 +222,7 @@ DESCRIPTION
             then all the margins are set to this number of pixels.
 
 SEE ALSO
-    <http://cpansearch.perl.org/src/GAAS/URI-GoogleChart-1.01/examples.html>
+    <http://cpansearch.perl.org/src/GAAS/URI-GoogleChart-1.02/examples.html>
 
     <http://code.google.com/apis/chart/>
 

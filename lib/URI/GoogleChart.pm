@@ -2,7 +2,7 @@ package URI::GoogleChart;
 
 use strict;
 
-our $VERSION = "1.01";
+our $VERSION = "1.02";
 
 use URI;
 use Carp qw(croak carp);
@@ -661,7 +661,7 @@ the margins are set to this number of pixels.
 
 =head1 SEE ALSO
 
-L<http://cpansearch.perl.org/src/GAAS/URI-GoogleChart-1.01/examples.html>
+L<http://cpansearch.perl.org/src/GAAS/URI-GoogleChart-1.02/examples.html>
 
 L<http://code.google.com/apis/chart/>
 

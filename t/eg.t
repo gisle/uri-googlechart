@@ -105,6 +105,21 @@ chart("lxy", 250, 125,
     color => [qw(3072F3 red)],
 );
 
+chart("lines", 400, 150,
+    data => [
+        { range => "a", v => [20, 21, 25, 25, 24, 21] },
+	{ range => "b", v => [1.1, 1.1, 1.3, 1.1, 1.7, 1.9] },
+    ],
+    range => {
+	a => { round => 1, show => "left" },
+	b => { round => 1, show => "right" },
+    },
+    color => ["red", "blue"],
+    label => ["Damage", "Profit"],
+    chxl => "0:|Jan|Feb|Mar|Apr|May|Jun",
+    chxt => "x",
+);
+
 chart("horizontal-stacked-bars", 200, 150,
     data => [
         [10,50,60,80,40],

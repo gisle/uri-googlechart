@@ -30,6 +30,8 @@ our %TYPE_ALIAS = (
     "radar" => "r",
     "radar-splines" => "rs",
     "google-o-meter" => "gom",
+    "tex" => "tx",
+    "formula" => "tx",
 
     "africa" => "t",
     "asia" => "t",
@@ -94,15 +96,18 @@ die unless length($STR_e) == 4096 * 2;
 
 
 sub new {
-    my($class, $type, $width, $height, %opt) = @_;
+    my $class = shift;
+    my $type = shift;
+    my($width, $height) = (shift, shift) if @_ && $_[0] =~ /^\d+$/;
+    my %opt = @_;
 
+    my %param;
     croak("Chart type not provided") unless $type;
-    croak("Chart size not provided") unless $width && $height;
-
-    my %param = (
-	cht => $TYPE_ALIAS{$type} || $type,
-	chs => join("x", $width, $height),
-    );
+    $param{cht} = $TYPE_ALIAS{$type} || $type;
+    if ($param{cht} ne "tx") {
+	croak("Chart size not provided") unless $width && $height;
+	$param{chs} = join("x", $width, $height);
+    }
     $param{chtm} = $type if $param{cht} eq "t" && $type ne "t";  # maps
 
     my %handle = (
@@ -137,7 +142,7 @@ sub new {
 	label => sub {
 	    my $lab = shift;
 	    $lab = [$lab] unless ref($lab) eq "ARRAY";
-	    my $k = $param{cht} =~ /^p|^gom$/ ? "chl" : "chdl";
+	    my $k = $param{cht} =~ /^p|^tx$|^gom$/ ? "chl" : "chdl";
 	    $param{$k} = join("|", @$lab);
 	},
 	rotate => sub {
@@ -492,6 +497,7 @@ Charts page or one of the following more readable aliases:
     radar
     radar-splines
     google-o-meter
+    formula
 
     world
     africa

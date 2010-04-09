@@ -18,6 +18,7 @@ our %TYPE_ALIAS = (
     "vertical-stacked-bars" => "bvs",
     "horizontal-grouped-bars" => "bhg",
     "vertical-grouped-bars" => "bvg",
+    "vertical-overlapped-bars" => "bvo",
 
     "pie" => "p",
     "pie-3d" => "p3",
@@ -480,6 +481,7 @@ Charts page or one of the following more readable aliases:
     vertical-stacked-bars
     horizontal-grouped-bars
     vertical-grouped-bars
+    vertical-overlapped-bars
 
     pie
     pie-3d

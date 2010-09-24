@@ -306,7 +306,9 @@ sub _data {
 	$step /= 10 if $step / $range >= 0.1;
 	$step *= 5 if $step / $range < 0.05;
 
-	$min = floor($min / $step - 0.2) * $step;
+        # step down the min unless it's already on a good step
+	$min = floor($min / $step - 0.2) * $step
+            unless floor($min / $step) * $step == $min;
 	$max = ceil($max / $step + 0.2) * $step;
 
 	# zero based minimum is usually a good thing so make it more likely

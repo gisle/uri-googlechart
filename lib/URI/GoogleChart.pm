@@ -2,12 +2,12 @@ package URI::GoogleChart;
 
 use strict;
 
-our $VERSION = "1.02";
+our $VERSION = "1.02.1";
 
 use URI;
 use Carp qw(croak carp);
 
-my $BASE = "http://chart.apis.google.com/chart";
+my $BASE = "http://chart.googleapis.com/chart";
 
 our %TYPE_ALIAS = (
     "lines" => "lc",
@@ -110,6 +110,7 @@ sub new {
     }
     $param{chtm} = $type if $param{cht} eq "t" && $type ne "t";  # maps
 
+    my $sslMode;
     my %handle = (
 	data => \&_data,
 	range => 1,
@@ -155,8 +156,12 @@ sub new {
 	    my $m = shift;
 	    $m = [($m) x 4] unless ref($m);
 	    $param{chma} = join(",", @$m);
+	},
+	ssl => sub{
+	    $sslMode = shift;
 	}
     );
+
 
     my $data = delete $opt{data};  # need to be processed last
     for my $k (keys %opt) {
@@ -172,7 +177,11 @@ sub new {
     _data($data, \%param, \%opt) if $data;
 
     # generate URI
-    my $uri = URI->new($BASE);
+    my $uri =  URI->new($BASE);
+    if( $sslMode ){
+	$uri->scheme('https');
+    }
+
     $uri->query_form(map { $_ => $param{$_} } _sort_chart_keys(keys %param));
     for ($uri->query) {
 	s/%3A/:/g;
@@ -664,6 +673,10 @@ rotate the pie 90 degrees the first slice starts at the bottom.  If you rotate
 
 Sets the chart margins in pixels.  If a single number is provided then all
 the margins are set to this number of pixels.
+
+=item ssl => $num
+
+If set to a true value, draw an https url
 
 =back
 
